@@ -75,8 +75,7 @@ def ask_rag(question: str, output_dir: str = OUTPUT_DIR, k: int = 8):
     )
 
     prompt = f"""
-You are a helpful assistant. Answer using only the provided context.
-If the answer is not supported by the context, say "I don't know."
+You are provided a multiple choice question. Answer the question with the context provided along with the reasoning"
 
 Context:
 {context}
@@ -100,4 +99,15 @@ Question:
 
 
 if __name__ == "__main__":
-    ask_rag("Which pages relate to MCP servers and tool choice?")
+    ask_rag(""" Production logs show the agent frequently calls get_customer when users ask about
+orders (e.g., "check my order #12345"), instead of calling lookup_order. Both tools have minimal
+descriptions ("Retrieves customer information" / "Retrieves order details") and accept similar
+identifier formats. What's the most effective first step to improve tool selection reliability?
+A) Add few-shot examples to the system prompt demonstrating correct tool selection patterns, with 5-8
+examples showing order-related queries routing to lookup_order.
+B) Expand each tool's description to include input formats it handles, example queries, edge cases, and
+boundaries explaining when to use it versus similar tools.
+C) Implement a routing layer that parses user input before each turn and pre-selects the appropriate tool
+based on detected keywords and identifier patterns.
+D) Consolidate both tools into a single lookup_entity tool that accepts any identifier and internally
+determines which backend to query.""")
