@@ -19,9 +19,9 @@ from taxonomy import TASK_TO_CUSTOM_CATEGORY, TAXONOMY
 BASE_URL = "https://platform.claude.com/docs/en/"
 OUTPUT_DIR = "./faiss_claude_docs"
 EMBED_MODEL = "nomic-embed-text"
-LLM_MODEL = "llama3.1"
+LLM_MODEL = "qwen2.5:32b"
 
-MAX_PAGES = 200
+MAX_PAGES = 768
 REQUEST_DELAY_SECONDS = 0.5
 TIMEOUT_SECONDS = 20
 
@@ -177,17 +177,16 @@ def extract_human_tags_from_url(url: str) -> list[str]:
     return [tag.replace("-", " ").strip() for tag in extract_tags_from_url(url)]
 
 
-def format_taxonomy_for_prompt(domain_filter: str | None = None) -> str:
+def format_taxonomy_for_prompt() -> str:
     lines = []
-
     for domain_id, domain_data in TAXONOMY.items():
-        if domain_filter and domain_id != domain_filter:
-            continue
-
-        lines.append(f"{domain_data['domain']}")
-        for task_id, task_statement in domain_data["tasks"].items():
-            lines.append(f"  - {task_id}: {task_statement}")
-
+        lines.append(domain_data["domain"])
+        for task_id, task_data in domain_data["tasks"].items():
+            lines.append(f"  {task_id}: {task_data['statement']}")
+            lines.append(f"    Description: {task_data['description']}")
+            lines.append(
+                f"    Keywords: {', '.join(task_data['keywords'][:6])}"
+            )
     return "\n".join(lines)
 
 
@@ -264,22 +263,80 @@ def guess_domain_from_text(text: str) -> str | None:
 def safe_json_loads(text: str) -> dict:
     text = text.strip()
 
+    # Strip markdown fences
     if text.startswith("```"):
         lines = text.splitlines()
-        if lines and lines[0].startswith("```"):
-            lines = lines[1:]
-        if lines and lines[-1].startswith("```"):
+        lines = lines[1:]  # remove opening fence
+        if lines and lines[-1].strip().startswith("```"):
             lines = lines[:-1]
         text = "\n".join(lines).strip()
 
+    # Extract first JSON object
     start = text.find("{")
     end = text.rfind("}")
-    if start != -1 and end != -1 and end > start:
-        text = text[start : end + 1]
+    if start == -1 or end == -1 or end <= start:
+        raise ValueError(f"No JSON object found in response: {text[:200]!r}")
+
+    text = text[start : end + 1]
+
+    # Try standard parse first
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # Attempt to fix trailing commas (common llama3.1 failure)
+    import re
+    text = re.sub(r",\s*([}\]])", r"\1", text)
 
     return json.loads(text)
 
+def classify_page_forced(url: str, title: str, content: str) -> dict:
+    """Simpler prompt that just asks for a task ID number, no JSON."""
+    llm = ChatOllama(model=LLM_MODEL, base_url="http://127.0.0.1:11434", temperature=0)
 
+    valid_task_ids = [
+        task_id
+        for domain_data in TAXONOMY.values()
+        for task_id in domain_data["tasks"]
+    ]
+    options = "\n".join(
+        f"{tid}: {TAXONOMY[tid.split('.')[0]]['tasks'][tid]}"
+        for tid in valid_task_ids
+    )
+    excerpt = build_classification_input(url, title, content)
+
+    prompt = f"""Pick the single best task ID for this page. Reply with ONLY the task ID (e.g. "2.4"), nothing else.
+
+OPTIONS:
+{options}
+
+PAGE:
+{excerpt[:1500]}
+
+TASK ID:"""
+
+    try:
+        response = llm.invoke(prompt)
+        task_id = response.content.strip().strip('"').strip()
+        domain_id = task_id.split(".")[0]
+
+        if domain_id not in TAXONOMY or task_id not in TAXONOMY[domain_id]["tasks"]:
+            raise ValueError(f"Invalid task ID: {task_id!r}")
+
+        return {
+            "primary_domain_id": domain_id,
+            "primary_domain": TAXONOMY[domain_id]["domain"],
+            "primary_task_id": task_id,
+            "primary_task_statement": TAXONOMY[domain_id]["tasks"][task_id]["statement"],
+            "secondary_task_ids": [],
+            "confidence": 0.5,
+            "reason": "Forced-choice classification.",
+            "custom_category": TASK_TO_CUSTOM_CATEGORY.get(task_id, "uncategorized"),
+        }
+    except Exception as exc:
+        return classify_page(url, title, content)  # fall back to original
+    
 def classify_page(url: str, title: str, content: str) -> dict:
     llm = ChatOllama(
         model=LLM_MODEL,
@@ -287,41 +344,42 @@ def classify_page(url: str, title: str, content: str) -> dict:
         temperature=0,
     )
 
-    excerpt = content[:5000]
-    guessed_domain = guess_domain_from_text(f"{url}\n{title}\n{excerpt}")
-    taxonomy_text = format_taxonomy_for_prompt(guessed_domain)
+    excerpt = build_classification_input(url, title, content)
+    # Don't filter — show the full taxonomy so the model can always find a valid ID
+    taxonomy_text = format_taxonomy_for_prompt()
 
-    prompt = f"""
-You are classifying a documentation page into a certification taxonomy.
+    # Build a flat list of valid task IDs for the model to reference
+    valid_task_ids = []
+    for domain_data in TAXONOMY.values():
+        valid_task_ids.extend(domain_data["tasks"].keys())
+    valid_ids_str = ", ".join(valid_task_ids)
 
-Taxonomy:
+    prompt = f"""You are classifying a documentation page into a taxonomy.
+
+VALID TASK IDs (you MUST use one of these exactly): {valid_ids_str}
+
+TAXONOMY:
 {taxonomy_text}
 
-Return valid JSON only with this exact schema:
-{{
-  "primary_domain_id": "string",
-  "primary_domain": "string",
-  "primary_task_id": "string",
-  "primary_task_statement": "string",
-  "secondary_task_ids": ["string"],
-  "confidence": 0.0,
-  "reason": "string"
-}}
+INSTRUCTIONS:
+- Read the page content below and pick the single best matching task ID from the list above.
+- "primary_domain_id" must be the digit before the dot in your chosen task ID (e.g. task "2.4" → domain_id "2").
+- "primary_domain" must be the exact domain name from the taxonomy.
+- "primary_task_statement" must be the exact statement from the taxonomy.
+- "secondary_task_ids" should be a JSON array of 0-2 other relevant task IDs, or [].
+- "confidence" is a float from 0.0 to 1.0.
+- "reason" is one sentence explaining your choice.
+- Output ONLY valid JSON. No explanation. No markdown fences. No extra text.
 
-Rules:
-- Choose exactly one primary task.
-- Secondary tasks may be empty.
-- Confidence must be between 0 and 1.
-- Base your answer only on the content provided.
-- If a domain filter is implied by the taxonomy shown, choose from only that
-  domain.
+EXAMPLE OUTPUT:
+{{"primary_domain_id":"2","primary_domain":"Domain2: Tool Design & MCP Integration","primary_task_id":"2.4","primary_task_statement":"Integrate MCP servers into Claude Code and agent workflows","secondary_task_ids":["2.1"],"confidence":0.85,"reason":"Page describes connecting remote MCP servers to agent workflows."}}
 
-URL: {url}
-Title: {title}
-
-Content excerpt:
+PAGE URL: {url}
+PAGE TITLE: {title}
+PAGE CONTENT:
 {excerpt}
-"""
+
+JSON:"""
 
     try:
         response = llm.invoke(prompt)
@@ -330,20 +388,40 @@ Content excerpt:
         primary_task_id = parsed.get("primary_task_id", "").strip()
         primary_domain_id = parsed.get("primary_domain_id", "").strip()
 
+        # Auto-correct domain_id from task_id if the model got it wrong
+        if primary_task_id and "." in primary_task_id:
+            derived_domain_id = primary_task_id.split(".")[0]
+            if derived_domain_id in TAXONOMY:
+                primary_domain_id = derived_domain_id
+                parsed["primary_domain_id"] = primary_domain_id
+                parsed["primary_domain"] = TAXONOMY[primary_domain_id]["domain"]
+
         if (
             primary_domain_id not in TAXONOMY
             or primary_task_id
             not in TAXONOMY.get(primary_domain_id, {}).get("tasks", {})
         ):
-            raise ValueError("Model returned invalid taxonomy mapping.")
+            raise ValueError(
+                f"Invalid taxonomy mapping: domain={primary_domain_id!r}, "
+                f"task={primary_task_id!r}"
+            )
+
+        # Normalize task statement to ground truth
+        parsed["primary_task_statement"] = TAXONOMY[primary_domain_id][
+            "tasks"
+        ][primary_task_id]
+        parsed["primary_domain"] = TAXONOMY[primary_domain_id]["domain"]
 
         parsed["custom_category"] = TASK_TO_CUSTOM_CATEGORY.get(
-            primary_task_id,
-            "uncategorized",
+            primary_task_id, "uncategorized"
         )
 
         return parsed
+
     except Exception as exc:
+        guessed_domain = guess_domain_from_text(
+            f"{url}\n{title}\n{content[:2000]}"
+        )
         fallback_domain_id = guessed_domain or "5"
         fallback_domain = TAXONOMY[fallback_domain_id]["domain"]
         fallback_task_id = next(iter(TAXONOMY[fallback_domain_id]["tasks"]))
@@ -358,10 +436,9 @@ Content excerpt:
             "primary_task_statement": fallback_task_statement,
             "secondary_task_ids": [],
             "confidence": 0.2,
-            "reason": f"Fallback classification used due to error: {exc}",
+            "reason": f"Fallback classification due to error: {exc}",
             "custom_category": TASK_TO_CUSTOM_CATEGORY.get(
-                fallback_task_id,
-                "uncategorized",
+                fallback_task_id, "uncategorized"
             ),
         }
 
@@ -454,7 +531,8 @@ def crawl_docs(base_url: str, max_pages: int = 200) -> list[Document]:
 
         if text:
             classification = classify_page(url, title, text)
-
+            if classification["confidence"] <= 0.2:
+                classification = classify_page_forced(url, title, text)
             documents.append(
                 Document(
                     page_content=text,
@@ -497,6 +575,20 @@ def crawl_docs(base_url: str, max_pages: int = 200) -> list[Document]:
 
     return documents
 
+def build_classification_input(url: str, title: str, content: str) -> str:
+    """Combine URL structure, title, and content into a rich signal string."""
+    url_tags = extract_human_tags_from_url(url)
+    tag_line = " > ".join(url_tags) if url_tags else ""
+
+    parts = []
+    if tag_line:
+        parts.append(f"Navigation path: {tag_line}")
+    if title:
+        parts.append(f"Title: {title}")
+    parts.append("")
+    parts.append(content[:2500])
+
+    return "\n".join(parts)
 
 def build_faiss(
     documents: list[Document],
