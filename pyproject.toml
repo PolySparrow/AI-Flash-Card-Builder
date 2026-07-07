@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "url-rag-faiss"
+version = "0.1.0"
+description = "Crawl a documentation URL subtree and build a FAISS vector database using Ollama embeddings."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "requests>=2.32.0",
+  "beautifulsoup4>=4.12.0",
+  "lxml>=5.2.0",
+  "trafilatura>=1.9.0",
+  "faiss-cpu>=1.8.0",
+  "langchain>=0.3.0",
+  "langchain-community>=0.3.0",
+  "langchain-text-splitters>=0.3.0",
+  "langchain-ollama>=0.2.0",
+  "python-dotenv>=1.0.1",
+  "playwright>=1.46.0",
+]
+
+[tool.setuptools]
+py-modules = []
