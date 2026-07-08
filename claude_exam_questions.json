@@ -1,0 +1,1142 @@
+[
+  {
+    "task_id": "1.1",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that the web search agent occasionally fails to integrate with the document analysis agent due to missing configuration flags in the pipeline script. To ensure seamless integration and prevent such issues, which of the following approaches should be taken when configuring the tool use for the web search agent?",
+    "options": {
+      "A": "Use the --print flag without specifying a target file or stream to debug the output.",
+      "B": "Configure the .claude/rules/ directory with appropriate rules files that specify how tools should interact and pass data between agents.",
+      "C": "Implement a custom tool runner in each agent's codebase to manually handle tool execution and result passing without relying on SDK features.",
+      "D": "Set the -p flag to enable parallel tool use, which is not supported by the current version of Claude Agent SDK."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees and does not address the integration issue between agents.",
+      "B": "Configuring the .claude/rules/ directory with appropriate rules files ensures that tools interact correctly and pass data seamlessly, addressing the integration problem directly.",
+      "C": "An over-engineered approach that bypasses SDK features designed for seamless tool interaction, leading to potential inconsistencies and maintenance issues.",
+      "D": "The -p flag does not exist in the current version of Claude Agent SDK, making this option invalid."
+    },
+    "explanation": "To ensure seamless integration between agents in a multi-agent research system using Claude Agent SDK, it is crucial to configure the .claude/rules/ directory with appropriate rules files. These rules specify how tools should interact and pass data between agents, ensuring deterministic guarantees for tool execution and result passing. This approach directly addresses the issue of missing configuration flags in pipeline scripts by providing a structured way to define agent interactions."
+  },
+  {
+    "task_id": "1.1",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that the web search agent occasionally fails to integrate with the document analysis pipeline due to missing configuration flags in the tool requests. To ensure seamless integration between agents and prevent such issues, which of the following approaches should be implemented?",
+    "options": {
+      "A": "-p --print: Adding this flag to each tool request will automatically print debug information for every tool execution.",
+      "B": "--tool-config-file .claude/rules/web_search_analysis.json: Specifying a configuration file that defines how web search results are processed and passed to the document analysis agent.",
+      "C": "Adding an explicit 'integration' field in each tool's input_schema with values like 'web_search', 'document_analysis'.",
+      "D": "-c --custom-tool-flag: A custom flag that can be used to pass arbitrary parameters between agents, though it does not exist in the SDK."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option relies on a non-existent flag and probabilistic LLM compliance instead of deterministic guarantees. Debugging flags do not ensure proper integration between agents.",
+      "B": "Correct, specifying a configuration file that defines how web search results are processed and passed to the document analysis agent ensures seamless integration by providing clear rules for data transformation and transmission.",
+      "C": "While adding an explicit 'integration' field might seem like a good idea, it does not address the need for standardized processing rules between agents. This approach is over-engineered and may lead to inconsistent behavior across different parts of the system.",
+      "D": "This option utilizes non-existent SDK features and syntax errors in this choice. Custom flags do not exist in the current version of the Claude Agent SDK."
+    },
+    "explanation": "The correct solution involves specifying a configuration file that defines how web search results are processed and passed to the document analysis agent. This approach ensures seamless integration by providing clear rules for data transformation and transmission, thereby preventing issues related to missing configuration flags in tool requests. The other options either rely on non-existent features or do not address the core problem of ensuring standardized processing between agents."
+  },
+  {
+    "task_id": "1.1",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "During development of your multi-agent research system using Claude Agent SDK, you notice that in certain cases, the web search agent fails to return results and hangs indefinitely without any error messages or tool_use events. Upon investigation, you find that the issue arises when the input query is too broad and leads to an ambiguous response from Claude, causing it to wait for further clarification instead of executing a tool. To address this, which of the following strategies should be implemented in your agentic loop?",
+    "options": {
+      "A": "Implement a timeout mechanism that automatically sends a follow-up message with a more specific query if no tool_use event is received within a certain timeframe.",
+      "B": "Modify the input_schema to include a 'query_type' field specifying whether the search should be broad or narrow, ensuring Claude understands the scope of the query and can execute the appropriate tool without ambiguity.",
+      "C": "Increase the max_tokens parameter in the request to allow for more detailed responses from Claude, hoping it will resolve the ambiguity issue.",
+      "D": "Use a custom 'force_tool_use' parameter in the request to force Claude into executing the search tool regardless of the query's clarity."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. While timeouts can help manage execution time, they do not address the root cause of ambiguity in the input.",
+      "B": "By specifying the 'query_type' field in the input_schema, you provide Claude with clear instructions about the scope and intent of the query, reducing ambiguity and ensuring it executes the appropriate tool deterministically.",
+      "C": "Increasing max_tokens may lead to more detailed responses but does not guarantee that Claude will execute a search tool when faced with an ambiguous query. This approach is overly broad and ineffective for resolving specific issues like this one.",
+      "D": "The 'force_tool_use' parameter does not exist in the SDK documentation, making it an invalid solution. Additionally, forcing tool use without addressing ambiguity could lead to incorrect or irrelevant results."
+    },
+    "explanation": "In the context of designing agentic loops for autonomous task execution using Claude Agent SDK, ensuring deterministic behavior is crucial. The correct approach involves modifying the input_schema to include a 'query_type' field that clarifies whether the search should be broad or narrow. This strategy directly addresses ambiguity in queries by providing clear instructions to Claude, thereby enabling it to execute the appropriate tool without waiting for further clarification. Options A and C attempt to manage symptoms rather than addressing the root cause of ambiguity, while option D proposes a non-existent SDK feature."
+  },
+  {
+    "task_id": "1.2",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "You are developing a multi-agent research system using Claude Agent SDK for an academic project. The system is designed to gather information from the web, analyze documents, synthesize findings, and generate comprehensive reports. During testing, you notice that the pipeline hangs indefinitely when attempting to execute complex workflows involving multiple subagents in parallel. To address this issue, which of the following configurations should be added or modified in your pipeline script to ensure proper orchestration and prevent hanging?",
+    "options": {
+      "A": "Add a timeout parameter (--timeout) for each subagent task to limit execution time.",
+      "B": "Configure the MAX_CONCURRENT variable to control the number of parallel subagents running at any given time.",
+      "C": "Implement a custom error handling mechanism in each subagent to terminate tasks that exceed a certain complexity level.",
+      "D": "Use the -p flag with the Claude Agent SDK to print detailed logs for debugging purposes."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "While setting timeouts can help manage execution time, it does not address the issue of hanging due to improper orchestration or parallelism.",
+      "B": "Configuring MAX_CONCURRENT ensures that only a specified number of subagents run simultaneously, preventing resource exhaustion and potential hangs caused by excessive parallel tasks.",
+      "C": "Custom error handling is useful but does not directly solve the problem of managing parallel execution limits in complex workflows.",
+      "D": "The -p flag for printing logs is useful for debugging but does not address the orchestration issue causing hanging."
+    },
+    "explanation": "In a multi-agent system, proper orchestration and management of parallel tasks are crucial to prevent issues such as hanging or resource exhaustion. The correct approach involves configuring variables like MAX_CONCURRENT in your pipeline script to control how many subagents can run concurrently. This ensures that the system does not attempt to execute too many tasks simultaneously, which could lead to hangs due to insufficient resources or improper task management."
+  },
+  {
+    "task_id": "1.2",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "During a production run of your multi-agent research system, you notice that in 5% of cases, the coordinator agent fails to delegate tasks to subagents properly due to an unexpected error message: 'Failed to initialize subagent with tool Workflow'. The logs indicate this happens when the system is under heavy load. How should you address this issue to ensure reliable task delegation?",
+    "options": {
+      "A": "Increase the timeout for each subtask in the coordinator's configuration.",
+      "B": "Implement a retry mechanism with exponential backoff for failed Workflow tool initializations.",
+      "C": "Reduce the number of concurrent tasks by lowering the MAX_CONCURRENT parameter.",
+      "D": "Add a custom error handler to the coordinator agent that bypasses the Workflow tool and directly sends commands to subagents."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "Increasing timeouts may help with slow responses but does not address the root cause of failed initializations.",
+      "B": "Implementing a retry mechanism with exponential backoff is a robust solution for transient errors, ensuring that tasks are eventually delegated even under heavy load.",
+      "C": "Reducing concurrency can alleviate load issues but might not solve the problem if it's related to initialization failures rather than resource constraints.",
+      "D": "Bypassing the Workflow tool undermines the orchestration pattern and could lead to inconsistent behavior across different parts of the system."
+    },
+    "explanation": "The correct approach involves implementing a retry mechanism with exponential backoff for failed Workflow tool initializations. This ensures that transient errors do not prevent task delegation, providing reliability under heavy load conditions as described in the documentation on orchestration mode and error handling practices. Increasing timeouts or reducing concurrency may mitigate symptoms but does not address the root cause of initialization failures."
+  },
+  {
+    "task_id": "1.2",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "You are developing a multi-agent research system using Claude Agent SDK where a coordinator agent delegates tasks to specialized subagents for web search, document analysis, synthesis of findings, and report generation. During testing, you notice that the system occasionally fails to properly handle errors when one of the subagents encounters an unexpected issue during its task execution. Which approach should be implemented in the coordinator's error handling mechanism to ensure robustness and deterministic behavior?",
+    "options": {
+      "A": "Implement a retry mechanism with exponential backoff for each subagent, assuming that transient issues will resolve over time.",
+      "B": "Use the Claude Agent SDK's built-in error handling features to catch exceptions thrown by subagents and route them through a dedicated error-handling subagent designed to analyze and report on errors before deciding on further action.",
+      "C": "Manually inspect logs for each failed task and adjust the system configuration based on observed patterns of failure, without implementing automated error handling.",
+      "D": "Disable all error reporting in the coordinator agent to prevent noise in the system's output."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. While retries can help with transient issues, they do not address root causes or provide a robust error handling strategy.",
+      "B": "Correct engineering solution based strictly on docs. The Claude Agent SDK's built-in error handling features allow for the creation of dedicated subagents to manage errors deterministically and systematically.",
+      "C": "This approach is overly manual and does not scale well with increasing system complexity or volume of tasks. It lacks automation and deterministic guarantees, leading to potential oversight and inefficiencies.",
+      "D": "Disabling error reporting undermines the ability to diagnose issues and maintain system integrity. This option fails to provide any mechanism for handling errors deterministically."
+    },
+    "explanation": "The correct approach is to leverage the Claude Agent SDK's built-in error handling features, which allow for the creation of a dedicated subagent specifically tasked with analyzing and reporting on errors encountered by other subagents. This ensures that all errors are handled systematically and deterministically, providing clear insights into issues as they arise without relying on manual intervention or probabilistic outcomes."
+  },
+  {
+    "task_id": "1.3",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that sometimes the web search subagent duplicates its tasks when it encounters a network error during execution. To mitigate this issue deterministically without relying on probabilistic behavior, which of the following approaches should be implemented in the coordinator agent's task invocation logic?",
+    "options": {
+      "A": "Use a global variable to track if a specific web search has already been initiated and skip duplicate tasks based on that.",
+      "B": "Implement a unique task ID for each web search request, ensuring no duplicates by checking against previously executed tasks in the context.",
+      "C": "Rely on Claude's internal caching mechanism to prevent duplicate requests automatically without any additional configuration or logic.",
+      "D": "Use a non-existent 'retry' parameter in Task tool calls to ensure that duplicate tasks are not created upon failure."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. The use of global variables is not a reliable method for ensuring task uniqueness across multiple executions.",
+      "B": "By implementing unique task IDs and checking against previously executed tasks in the context, you ensure that duplicate tasks are avoided deterministically without relying on any non-deterministic behavior or external state management.",
+      "C": "Claude's internal caching mechanism does not provide a deterministic way to prevent duplicate requests. Relying solely on this feature may lead to inconsistent results and is not recommended for critical task management.",
+      "D": "The 'retry' parameter does not exist in the Task tool calls of Claude Agent SDK, making this option invalid and non-functional."
+    },
+    "explanation": "To prevent duplicate tasks deterministically in a multi-agent research system using Claude Agent SDK, it is crucial to implement unique task IDs for each web search request. This approach ensures that no duplicates are created upon failure by checking against previously executed tasks within the context of the agent's execution environment. Utilizing global variables or relying on probabilistic caching mechanisms can lead to inconsistent results and should be avoided in favor of deterministic solutions."
+  },
+  {
+    "task_id": "1.3",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you need to ensure that each subagent receives specific context and tools required for its task without interfering with the main agent's context. To achieve this, you decide to use a configuration file in .claude/rules/ directory. What is the correct syntax to specify the context passing and tool invocation for a subagent using Task tool?",
+    "options": {
+      "A": "Using `context: fork` in the SKILL.md frontmatter of each subagent's skill definition.",
+      "B": "In .claude/rules/, define an agent with `AgentDefinition`, specifying `allowedTools` and passing context via `-c` flag when invoking Task tool.",
+      "C": "Creating a custom environment variable named `CLAUDE_CONTEXT_PASSING` in the main agent's configuration file.",
+      "D": "Using undocumented `--context-isolate` flag when spawning subagents with the Task tool."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option relies on an incorrect understanding of how context is managed within skills. The SKILL.md frontmatter does not control context passing between agents.",
+      "B": "Correctly identifies the need to define AgentDefinition in .claude/rules/ and explicitly pass necessary context when invoking Task tool, ensuring subagents operate with isolated contexts as required by the scenario.",
+      "C": "This approach is overly simplistic and does not address the specific requirements of passing context and specifying allowed tools for each subagent. It also introduces unnecessary complexity without solving the problem.",
+      "D": "The `--context-isolate` flag is a distractor, as it does not exist in the current SDK documentation. This option reflects an attempt to use non-existent features which would fail in practice."
+    },
+    "explanation": "In the context of building a multi-agent research system using Claude Agent SDK, ensuring each subagent operates with its own isolated context and tools is crucial for maintaining system integrity and efficiency. The correct approach involves defining an `AgentDefinition` in .claude/rules/ to specify allowed tools (`allowedTools`) and passing necessary context explicitly when invoking the Task tool via `-c` flag. This method ensures that each subagent receives only the context it needs, preventing interference with the main agent's context or other subagents' contexts."
+  },
+  {
+    "task_id": "1.4",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "Your pipeline script hangs indefinitely in CI when attempting to run parallel tool calls for subagents, despite being configured correctly according to your understanding. You suspect the issue might be related to how you're handling multiple tool_use blocks within a single response from Claude. Which of the following configurations or strategies should you implement to ensure proper execution and handoff of parallel tasks?",
+    "options": {
+      "A": "Use the --parallel flag in your pipeline script to force concurrent execution of all tool calls.",
+      "B": "Ensure that each tool_result returned by your agent includes a unique tool_use_id, and return them sequentially in the next user message after handling any errors or dependencies between tools.",
+      "C": "Modify the .claude/rules/parallel.yaml file to disable parallelism globally for this project.",
+      "D": "Implement a custom fork_session configuration in your AgentDefinition to enforce sequential execution of all subagent tasks."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. The --parallel flag does not exist and is an incorrect approach.",
+      "B": "Correctly adheres to the documentation guidelines for handling parallel tool calls, ensuring each tool_result includes a unique identifier and proper error handling or dependency resolution before returning them sequentially in the next user message.",
+      "C": "Disabling parallelism globally would defeat the purpose of using multi-agent systems for efficiency. This approach is over-engineered and does not address the root cause of improper execution handoff.",
+      "D": "While fork_session can be used to manage subagent sessions, enforcing sequential execution contradicts the benefits of parallel tool use as described in the documentation."
+    },
+    "explanation": "The correct solution involves adhering strictly to the guidelines for handling multiple tool_use blocks within a single response from Claude. This includes ensuring each returned tool_result has a unique tool_use_id and properly managing any errors or dependencies between tools before returning them sequentially in the next user message. This approach ensures deterministic execution and proper handoff of tasks, avoiding issues like indefinite hanging that can arise from improper handling of parallelism."
+  },
+  {
+    "task_id": "1.4",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "Your pipeline script hangs indefinitely in CI when attempting to run parallel subagents for a multi-agent research system using Claude Agent SDK. The coordinator agent delegates tasks to specialized subagents, but the execution gets stuck after initiating multiple Task tool calls. What configuration or syntax change should you implement to ensure proper handling and execution of these parallel subagent invocations?",
+    "options": {
+      "A": "Add a -p flag in your pipeline script to force sequential execution of all tools.",
+      "B": "Configure the .claude/rules/parallelism.json file with appropriate settings for enforcing structured handoff protocols between subagents.",
+      "C": "Modify the AgentDefinition config to include a custom fork_session method that manually manages parallel session states.",
+      "D": "Use an undocumented --disable-parallel flag in your pipeline script to prevent any tool from running concurrently."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. The -p flag does not exist and forcing sequential execution would defeat the purpose of parallelism.",
+      "B": "Correct engineering solution based strictly on docs: Configuring .claude/rules/parallelism.json with appropriate settings enforces structured handoff protocols, ensuring proper handling and execution of parallel subagent invocations.",
+      "C": "While manually managing session states might seem like a direct approach, it overcomplicates the orchestration process. The SDK provides mechanisms for structured handoffs which should be utilized to maintain simplicity and reliability.",
+      "D": "This option utilizes non-existent SDK features. There is no --disable-parallel flag available in the Claude Agent SDK."
+    },
+    "explanation": "The correct solution involves configuring the .claude/rules/parallelism.json file with appropriate settings for enforcing structured handoff protocols between subagents, as per the documentation provided. This ensures that parallel tool invocations are handled correctly and prevents issues such as hanging or indefinite execution in CI pipelines. The other options either rely on non-existent features, overcomplicate the solution, or fail to address the core issue of proper orchestration for parallelism."
+  },
+  {
+    "task_id": "1.5",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that some agents are occasionally skipping tool calls due to inconsistent input formats. To enforce strict schema compliance and ensure deterministic guarantees for each agent's tool calls, which of the following approaches should be taken?",
+    "options": {
+      "A": "Modify the prompt instructions to remind agents about the required format.",
+      "B": "Set 'strict': true in the tool definition alongside name, description, and input_schema.",
+      "C": "Implement a custom data validation function within each agent's logic before calling tools.",
+      "D": "Use the non-existent SDK feature 'tool_compliance_mode' to enforce schema compliance."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees, making it unreliable for production systems.",
+      "B": "Setting 'strict': true in the tool definition ensures that Claude's tool inputs match your JSON Schema by constraining token sampling to schema-valid outputs, providing deterministic guarantees.",
+      "C": "While this approach can work, it introduces redundancy and complexity. The SDK already provides a mechanism for strict schema compliance through the 'strict' property.",
+      "D": "The feature 'tool_compliance_mode' does not exist in the Claude Agent SDK; attempting to use non-existent features leads to undefined behavior."
+    },
+    "explanation": "To enforce strict schema compliance and ensure deterministic guarantees for each agent's tool calls, setting 'strict': true in the tool definition alongside name, description, and input_schema is the correct approach. This leverages the Claude Agent SDK's built-in mechanism for grammar-constrained sampling to validate tool inputs strictly against a defined JSON Schema. Modifying prompt instructions or implementing custom validation functions are less reliable alternatives that do not offer the same level of deterministic guarantees as the 'strict' property."
+  },
+  {
+    "task_id": "1.5",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that some agents are occasionally returning improperly formatted JSON responses when calling external APIs for data retrieval. To enforce strict schema compliance and ensure all tool calls adhere to the defined input_schema, which of the following approaches should be implemented in the agent's configuration?",
+    "options": {
+      "A": "Use a custom prompt to instruct Claude to format its response according to the JSON Schema.",
+      "B": "Set 'strict': true for each tool definition and define an appropriate input_schema that matches the expected API call parameters.",
+      "C": "Implement a middleware layer in your system to validate and normalize all incoming responses before processing them.",
+      "D": "Enable 'auto_format': true on the agent's configuration to automatically format JSON outputs according to the schema."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. Claude may not consistently adhere to a custom prompt for formatting responses.",
+      "B": "Setting 'strict': true and defining an appropriate input_schema ensures that Claude's tool calls strictly follow the schema, guaranteeing type-safe parameters and eliminating syntax errors.",
+      "C": "While this approach can be effective, it introduces additional complexity and overhead. The correct solution is to enforce strict schema compliance at the source (tool definition) rather than post-processing responses.",
+      "D": "There is no 'auto_format' parameter in the Claude Agent SDK configuration. This option reflects an obsolete or non-existent feature."
+    },
+    "explanation": "The correct approach involves setting 'strict': true for each tool definition and defining a corresponding input_schema that matches the expected API call parameters. This ensures deterministic guarantees of schema compliance, preventing improperly formatted JSON responses and ensuring type-safe parameters. While other approaches like custom prompts or middleware validation can be implemented, they do not offer the same level of reliability as enforcing strict schema compliance directly in the tool definition."
+  },
+  {
+    "task_id": "1.6",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that the document analysis agent occasionally fails to process files correctly due to unexpected environment variable configurations. To mitigate this issue deterministically, which of the following strategies should be implemented in the agent's workflow?",
+    "options": {
+      "A": "Use a probabilistic approach where the agent checks for common environment variables and assumes default values if they are missing.",
+      "B": "Ensure that each tool call within the agent includes an explicit setup command to initialize necessary environment variables before running any file analysis commands.",
+      "C": "Implement a fallback mechanism in the agent's codebase that retries failed operations with different environment variable configurations until success is achieved.",
+      "D": "Configure the Claude Agent SDK to automatically detect and set missing environment variables based on predefined heuristics."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees, leading to inconsistent behavior across different runs.",
+      "B": "By explicitly setting up necessary environment variables before each tool call, the agent ensures a consistent and predictable execution context for file analysis commands.",
+      "C": "While retries can help with transient issues, this approach does not address the root cause of missing or incorrect environment variable configurations, leading to potential inefficiencies and unreliability.",
+      "D": "The Claude Agent SDK does not provide automatic detection and setting of missing environment variables; such a feature would require custom implementation."
+    },
+    "explanation": "In the context of building a multi-agent research system using the Claude Agent SDK, it is crucial to ensure that each agent's workflow operates deterministically. The correct approach involves explicitly initializing necessary environment variables before executing any file analysis commands. This ensures that the execution context remains consistent and predictable across different runs, mitigating issues related to unexpected or missing environment variable configurations. Options A, C, and D either rely on probabilistic behavior, introduce inefficiencies through retries without addressing root causes, or utilize non-existent SDK features."
+  },
+  {
+    "task_id": "1.6",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "During a routine audit of your multi-agent research system logs, you notice that in certain cases, the web search agent fails to execute its assigned bash commands properly. The error message indicates that the command 'ls *.py' is not returning any Python files when it should be listing all Python scripts in the current directory. What could be causing this issue and how would you resolve it?",
+    "options": {
+      "A": "Check if the working directory contains any Python files by running 'find . -name '*.py'' instead of relying on glob patterns.",
+      "B": "Ensure that the bash session is properly initialized with a command like 'cd /path/to/directory' before executing file listing commands to set the correct working directory.",
+      "C": "Modify the agent's configuration to include a restart parameter in the tool_use block, forcing the bash session to start anew for each command execution.",
+      "D": "Use the non-existent 'claude-restart-session' API endpoint to reset the state of the bash session between commands."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option suggests a workaround using find instead of ls, which is not addressing the root cause. The issue lies in the working directory context rather than the command itself.",
+      "B": "Correctly identifies that the bash session might be running from an incorrect directory and provides a clear solution to set the correct working directory before executing file listing commands.",
+      "C": "While restarting the bash session could potentially resolve issues related to stale state, it is not necessary in this case. The problem can be solved by setting the correct working directory first.",
+      "D": "This option references a non-existent API endpoint and does not address the actual issue of incorrect working directory context."
+    },
+    "explanation": "The issue described stems from the bash session executing commands from an unexpected or incorrect directory, leading to 'ls *.py' returning no results when it should list Python files. The correct solution is to ensure that the bash session starts in the expected directory by running a command like 'cd /path/to/directory'. This approach directly addresses the problem without introducing unnecessary complexity or relying on non-existent features."
+  },
+  {
+    "task_id": "1.7",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that during long-running sessions, the context degrades significantly and affects the quality of responses generated by subagents. To mitigate this issue, you decide to implement compaction as described in the documentation. However, when attempting to configure compaction for a session, you encounter an error indicating that the 'compact_20260112' strategy is not recognized. What is the correct way to enable compaction in your Messages API request?",
+    "options": {
+      "A": "Add compact_20260112 as a beta header in the API request.",
+      "B": "Include 'compact_20260112' under context_management.edits with the correct configuration parameters.",
+      "C": "Use /compact command directly within your session messages to trigger compaction manually.",
+      "D": "Enable compaction by setting a custom environment variable COMPACT_STRATEGY=compact_20260112 before making API requests."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. Adding compact_20260112 as a beta header does not configure compaction; it is used to enable the feature.",
+      "B": "Correct engineering solution based strictly on docs: Enabling compaction requires specifying 'compact_20260112' under context_management.edits with appropriate configuration parameters, such as trigger type and value.",
+      "C": "This option suggests a manual intervention that is not supported by the SDK. Compaction must be configured programmatically in API requests rather than through session messages.",
+      "D": "Incorrect option utilizing non-existent SDK features: There is no environment variable COMPACT_STRATEGY to enable compaction."
+    },
+    "explanation": "To effectively manage context degradation during long-running sessions, it's crucial to configure compaction correctly using the Claude Agent SDK. The correct approach involves specifying 'compact_20260112' under context_management.edits in your Messages API request and configuring parameters such as trigger type and value. This ensures that compaction is enabled deterministically without relying on manual interventions or unsupported features."
+  },
+  {
+    "task_id": "1.7",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "During a long-running research session in your multi-agent system, you notice that the agent's performance degrades significantly after processing extensive amounts of data. Upon reviewing logs, you find an entry indicating 'context window limit exceeded'. To address this issue and maintain context integrity throughout extended sessions, which API configuration should you implement to enable automatic summarization?",
+    "options": {
+      "A": "Set max_tokens to a higher value in the Messages API request.",
+      "B": "Add the compact_20260112 strategy to context_management.edits with appropriate trigger settings.",
+      "C": "Increase the session timeout duration to allow more time for data processing.",
+      "D": "Implement a custom /compact command in your agent's logic to manually summarize content."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option fails because increasing max_tokens does not address the context window limit issue; it only affects the length of generated responses.",
+      "B": "Correct. The compact_20260112 strategy automatically summarizes older context when approaching the token threshold, effectively managing long-running conversations and tasks without manual intervention.",
+      "C": "This option is incorrect because extending session timeouts does not solve the problem of context degradation due to excessive data processing.",
+      "D": "While manually summarizing content might seem like a solution, it relies on probabilistic LLM compliance instead of deterministic guarantees provided by the compaction feature."
+    },
+    "explanation": "The correct approach is to enable automatic summarization using the compact_20260112 strategy within context_management.edits. This ensures that as conversations grow and approach token limits, Claude automatically generates a concise summary of older content, maintaining effective context length and quality throughout extended sessions. Incorrect options either fail to address the core issue or introduce unnecessary complexity without leveraging existing SDK features."
+  },
+  {
+    "task_id": "2.1",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that some agents are not correctly routing requests to the appropriate MCP tools due to overlapping descriptions in tool configurations. To address this issue and ensure reliable tool selection, which of the following approaches should be implemented?",
+    "options": {
+      "A": "Modify each agent's prompt to explicitly state the expected tool names for specific tasks.",
+      "B": "Use the 'defer_loading' property set to true in the MCPToolset configuration for tools with overlapping descriptions.",
+      "C": "Create a custom middleware layer that intercepts and re-routes requests based on keyword matching before they reach Claude.",
+      "D": "Implement a global variable in the system prompt that dynamically adjusts tool selection logic at runtime."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. While modifying prompts can influence behavior, it does not provide a clear and consistent mechanism for preventing misrouting.",
+      "B": "Using the 'defer_loading' property set to true in MCPToolset configuration ensures that overlapping descriptions do not cause misrouting by deferring tool description loading until explicitly requested. This approach is directly supported by the documentation and offers deterministic control over tool selection.",
+      "C": "Creating a custom middleware layer introduces additional complexity and maintenance overhead without leveraging existing SDK features designed for this purpose. It also bypasses the benefits of programmatic enforcement provided by MCPToolset configurations.",
+      "D": "Implementing a global variable in the system prompt to dynamically adjust tool selection logic is not supported by the current SDK version and would require custom development beyond the scope of available documentation."
+    },
+    "explanation": "The correct approach involves using the 'defer_loading' property set to true within MCPToolset configurations for tools with overlapping descriptions. This method ensures that tool descriptions are only loaded when explicitly requested, thereby preventing misrouting due to ambiguous or overlapping descriptions. The other options either introduce unnecessary complexity (custom middleware), rely on probabilistic behavior rather than deterministic guarantees (prompt modifications), or utilize non-existent features (global variables in system prompts)."
+  },
+  {
+    "task_id": "2.1",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that when a user asks for specific document analysis tasks, the agent sometimes fails to route requests correctly to the appropriate subagent due to ambiguous tool descriptions in the MCP connector configuration. To address this issue and ensure deterministic routing of tasks to the correct subagents, which of the following approaches should you take?",
+    "options": {
+      "A": "Modify system prompts to include more detailed instructions for each task type.",
+      "B": "Configure the MCP connector with precise tool descriptions that clearly delineate input formats, example queries, and edge cases for each specialized subagent.",
+      "C": "Implement a fallback mechanism where Claude attempts multiple tools sequentially until one responds successfully.",
+      "D": "Use environment variables to dynamically adjust tool configurations at runtime based on user requests."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. While modifying system prompts can help, it does not address the root cause of ambiguous tool descriptions.",
+      "B": "Configuring the MCP connector with precise tool descriptions ensures that each subagent's capabilities are clearly defined and routable based on user input, leading to reliable task execution.",
+      "C": "This approach is over-engineered and introduces complexity. It does not address the core issue of ambiguous tool descriptions and may lead to inefficiencies in task routing.",
+      "D": "Environment variables can be used for credentials but do not provide a mechanism for defining precise tool configurations or input formats."
+    },
+    "explanation": "To ensure that tasks are routed correctly to specialized subagents, it is crucial to define clear and unambiguous tool descriptions within the MCP connector configuration. This includes specifying input formats, example queries, and edge cases for each subagent's capabilities. By doing so, you create a deterministic system where Claude can reliably route user requests based on the provided information without relying on probabilistic methods or fallback mechanisms."
+  },
+  {
+    "task_id": "2.1",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you encounter an issue where agents are not properly integrating with a remote MCP server for tool execution. The pipeline script hangs indefinitely in CI when attempting to connect and use tools from the MCP server. Given that the MCP server is correctly configured and accessible, which of the following configurations should be added or modified in your Claude Agent SDK setup to ensure proper integration?",
+    "options": {
+      "A": "Add a 'tool_integration' flag with value 'true' in the .claude/rules/ directory configuration file.",
+      "B": "Ensure that the MCP server is defined under mcp_servers array and the corresponding tools are enabled via an MCPToolset object within the tools array, as per the documentation example provided.",
+      "C": "Modify the system prompt to include a directive like 'Use all available tools from the MCP server.'",
+      "D": "Implement a custom middleware in your pipeline script that manually calls each tool's API endpoint."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option relies on an undocumented and non-existent feature, 'tool_integration' flag. The correct approach is to follow the documented configuration for MCP servers and tools.",
+      "B": "Correctly configuring the mcp_servers array with server details and enabling specific tools via MCPToolset ensures that Claude can properly integrate with the remote MCP server and utilize its tools as intended.",
+      "C": "While modifying system prompts might influence tool usage, it does not address the core issue of proper configuration for connecting to an MCP server. This is a plausible but ineffective solution.",
+      "D": "Implementing custom middleware would bypass the need for proper integration with the Claude Agent SDK and MCP connector feature, leading to unnecessary complexity and potential security risks."
+    },
+    "explanation": "The correct answer involves ensuring that the remote MCP server is properly defined in the mcp_servers array with all necessary connection details (URL, name, authorization_token) and that the corresponding tools are enabled via an MCPToolset object within the tools array. This configuration allows Claude to connect to the MCP server and utilize its tools as intended without additional manual intervention or middleware implementation."
+  },
+  {
+    "task_id": "2.2",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you encounter a situation where the Compliance API returns an error with type 'invalid_request_error' due to a malformed timestamp in the request. The error message indicates that the created_at.gte parameter contains an invalid timestamp format. To resolve this issue and ensure future requests are compliant, which of the following approaches should be implemented?",
+    "options": {
+      "A": "Modify the agent's logic to retry the request with exponential backoff until a valid response is received.",
+      "B": "Ensure that all timestamps in the created_at.gte parameter adhere to RFC 3339 format, such as '2024-03-01T00:00:00Z', and validate them before sending requests.",
+      "C": "Implement a fallback mechanism where the agent sends an empty timestamp if it detects that the provided timestamp is invalid.",
+      "D": "Use a custom error handler to log the issue and continue processing other tasks without retrying or validating timestamps."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. Exponential backoff is not necessary for validation errors, which are non-retryable.",
+      "B": "Correct engineering solution based strictly on docs: Ensuring timestamps adhere to RFC 3339 format and validating them before sending requests prevents invalid_request_error from occurring in the first place.",
+      "C": "This approach bypasses proper error handling by ignoring validation errors, leading to potential data integrity issues and continued API misuse.",
+      "D": "Logging without retrying or validating timestamps does not address the root cause of the issue and can lead to repeated failures."
+    },
+    "explanation": "The correct answer is B because it directly addresses the documented requirement for RFC 3339 formatted timestamps in the Compliance API's created_at.gte parameter. This approach ensures that all requests are compliant with the API specifications, preventing 'invalid_request_error' due to malformed timestamps. Options A and C introduce unnecessary complexity or bypass proper validation, while option D fails to address the error at all."
+  },
+  {
+    "task_id": "2.2",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "During a routine audit of your multi-agent research system logs, you notice that in 12% of cases, the web search agent encounters an error with status code 409 Conflict when attempting to fetch data from the Compliance API. The error message indicates a conflict with the resource's current state. According to the documentation, how should this error be handled?",
+    "options": {
+      "A": "Retry the request immediately without any modifications.",
+      "B": "Resolve the conflict (such as detaching child resources) and then retry the request.",
+      "C": "Wait for a specified period of time before retrying the request, based on the 'retry-after' header value.",
+      "D": "Ignore the error and proceed with fetching data from alternative sources."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. Immediate retries without resolving conflicts can lead to further errors or resource exhaustion.",
+      "B": "Correct engineering solution based strictly on docs: The Compliance API returns a 409 Conflict status code when the request conflicts with the resource's current state, indicating that the conflict needs to be resolved before retrying.",
+      "C": "This option is incorrect because it applies to errors with a 'retry-after' header value (e.g., 429 Too Many Requests), not 409 Conflict. The correct approach for 409 is to resolve the conflict first.",
+      "D": "Ignoring the error without attempting resolution or retry can lead to incomplete data and system instability, violating best practices in error handling."
+    },
+    "explanation": "The Compliance API returns a 409 Conflict status code when there is a conflict with the resource's current state. According to the documentation, this type of error requires resolving the conflict before retrying the request. This ensures that subsequent requests do not encounter the same issue and maintain system integrity."
+  },
+  {
+    "task_id": "2.3",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that the web search agent occasionally misroutes queries intended for document analysis to itself due to overlapping tool descriptions. To address this issue without overhauling the entire system architecture, which of the following approaches would most effectively prevent such misrouting while maintaining a clear and concise tool interface?",
+    "options": {
+      "A": "Modify each tool's description to include specific keywords that uniquely identify its purpose.",
+      "B": "Implement programmatic enforcement by configuring the 'tool_choice' parameter to 'forced' for each specialized subagent, ensuring they can only use their designated tools.",
+      "C": "Expand the descriptions of all tools to cover every possible scenario and edge case, making them more comprehensive but also ambiguous.",
+      "D": "Use a system prompt that instructs Claude to manually select the correct tool based on context clues in the query."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "While adding specific keywords can help, it does not guarantee deterministic selection and relies on probabilistic compliance from the LLM.",
+      "B": "Configuring 'tool_choice' to 'forced' ensures that each subagent is restricted to its designated tools, preventing misrouting without altering descriptions or prompts.",
+      "C": "Expanding descriptions to cover all scenarios can lead to ambiguity and overlap, increasing the likelihood of misrouting rather than resolving it.",
+      "D": "Relying on manual selection via system prompts introduces variability and does not provide a deterministic solution for tool choice."
+    },
+    "explanation": "The correct approach is to implement programmatic enforcement by configuring the 'tool_choice' parameter to 'forced' for each specialized subagent. This method ensures that each agent can only use its designated tools, thereby preventing misrouting due to overlapping descriptions without requiring changes to the tool interfaces or relying on probabilistic compliance from the LLM."
+  },
+  {
+    "task_id": "2.3",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you notice that the web search agent occasionally misroutes queries intended for document analysis to itself due to overlapping tool descriptions. To address this issue, which of the following approaches should you take?",
+    "options": {
+      "A": "Modify the system prompt to include a rule that explicitly states when each subagent should be used.",
+      "B": "Restrict the web search agent's tool set to only those tools relevant for searching and remove any overlapping descriptions with document analysis tools.",
+      "C": "Increase the verbosity of all tool descriptions to ensure Claude understands their purpose better.",
+      "D": "Implement a custom middleware that intercepts queries and manually routes them based on content analysis."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. System prompts are not designed to handle such granular routing rules.",
+      "B": "Restricting the web search agent's tool set to only relevant tools and removing overlapping descriptions ensures clear boundaries for each subagent, preventing misrouting due to ambiguous or overlapping descriptions.",
+      "C": "Increasing verbosity without clarifying boundaries can lead to more confusion. Overlapping descriptions are a primary cause of misrouting, not insufficient detail.",
+      "D": "Implementing custom middleware introduces unnecessary complexity and bypasses the intended use of the Claude Agent SDK for tool management."
+    },
+    "explanation": "The correct approach is to restrict the web search agent's tool set to only those tools relevant for searching and remove any overlapping descriptions with document analysis tools. This ensures that each subagent has a clear, non-overlapping set of responsibilities, reducing the likelihood of misrouting due to ambiguous or overlapping descriptions. Modifying system prompts or increasing verbosity does not address the root cause of overlapping descriptions, while implementing custom middleware introduces unnecessary complexity."
+  },
+  {
+    "task_id": "2.4",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system, you notice that the web search agent occasionally retrieves outdated information due to a delay in updating its MCP server configuration. To mitigate this issue and ensure deterministic behavior when integrating new MCP servers into Claude Code workflows, which of the following approaches should be taken?",
+    "options": {
+      "A": "Manually update the .mcp.json file for each project every time a new MCP server is integrated.",
+      "B": "Use environment variable expansion in the ~/.claude.json to dynamically reference credentials and configurations for MCP servers, ensuring that updates are automatically reflected across all projects without manual intervention.",
+      "C": "Rely on the system's default configuration settings to handle any changes in MCP server integration automatically.",
+      "D": "Implement a custom MCP client wrapper around the Claude Agent SDK to manage MCP server connections independently of the official MCP connector."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This approach relies on manual intervention, which is error-prone and does not scale well for multiple projects or frequent updates.",
+      "B": "Using environment variable expansion in the ~/.claude.json file allows for dynamic referencing of credentials and configurations. This ensures that any changes to MCP server settings are automatically reflected across all projects without requiring individual project configuration updates.",
+      "C": "Relying on default settings may not provide sufficient control over MCP server integration, leading to potential inconsistencies or security issues if the defaults do not align with specific project requirements.",
+      "D": "Implementing a custom MCP client wrapper is an unnecessary complication that bypasses the official MCP connector's capabilities and could introduce compatibility issues or maintenance overhead."
+    },
+    "explanation": "The correct approach involves leveraging environment variable expansion within the ~/.claude.json file to dynamically reference credentials and configurations for MCP servers. This method ensures deterministic behavior by automatically reflecting any changes in MCP server settings across all projects without requiring manual updates, thus mitigating delays and ensuring up-to-date information retrieval."
+  },
+  {
+    "task_id": "2.4",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system, you need to ensure that the document analysis subagent only calls specific tools from an MCP server for analyzing PDF documents and not any other types of files. Which configuration approach should you take in the .mcp.json file to achieve this?",
+    "options": {
+      "A": "Set 'enabled: false' as the default_config for all tools, then explicitly enable the document analysis tools.",
+      "B": "Configure a toolset with 'default_config.enabled: true', and use 'configs' to disable non-document analysis tools.",
+      "C": "Use environment variables in ~/.claude.json to conditionally load different MCP servers based on file type.",
+      "D": "Create separate MCP server entries for each document type, enabling only the relevant tools."
+    },
+    "correct_answer": "A",
+    "option_explanations": {
+      "A": "Explanation validating why this option is correct. By setting 'enabled: false' as the default_config and explicitly enabling specific document analysis tools, you ensure that only those tools are available for use by the subagent.",
+      "B": "This approach would enable all tools initially, which contradicts the requirement to restrict access to non-document analysis tools. It fails to provide a deterministic solution.",
+      "C": "Using environment variables in ~/.claude.json is not an appropriate method for controlling tool availability within MCP server configurations. This distractor suggests over-engineering by introducing unnecessary complexity.",
+      "D": "Creating separate MCP servers for each document type would be overly complex and inefficient, especially if the same tools are used across different types of documents with minor variations."
+    },
+    "explanation": "The correct approach is to set 'enabled: false' as the default_config in your .mcp.json file. This ensures that all tools are disabled by default. Then, you can explicitly enable only the document analysis tools needed for PDF files within the same MCP server configuration. This method provides a clear and deterministic way to control which tools are available to the subagent without requiring additional infrastructure or complex conditional logic."
+  },
+  {
+    "task_id": "2.5",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "During a routine audit of your multi-agent research system logs, you notice that in 10% of cases, the web search agent fails to execute its assigned task and returns an empty response without any error message or tool_use block. The issue appears intermittently across different runs and environments. To diagnose this production failure, which command should be added to the agent's script to ensure it always logs the current working directory before attempting to run a bash command?",
+    "options": {
+      "A": "echo $PWD",
+      "B": "pwd > /tmp/current_dir.log && echo 'Logged current directory'",
+      "C": "ls -la >> /var/log/agent_logs.txt",
+      "D": "set_env WORKING_DIR=$(pwd) && export WORKING_DIR"
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option only prints the current working directory to stdout, which is not logged and does not provide a persistent record for debugging.",
+      "B": "Correct. This command logs the current working directory to /tmp/current_dir.log before proceeding with the task execution, providing a deterministic way to trace the agent's state when it fails.",
+      "C": "This option lists all files in the directory and appends them to an existing log file, which is not specific to logging the current working directory and could clutter logs unnecessarily.",
+      "D": "This option attempts to set an environment variable but does not actually write or log the current directory path."
+    },
+    "explanation": "The correct answer involves using the 'pwd' command to capture the current working directory of the agent's bash session before attempting any task execution. Logging this information ensures that when a failure occurs, there is a clear record of the environment state at the time of the issue. This approach adheres to deterministic logging practices and provides actionable insights for debugging intermittent failures."
+  },
+  {
+    "task_id": "2.5",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system, you need to ensure that each subagent's bash commands are executed in a persistent session across multiple tool calls for state consistency. However, during testing, you notice that the session is not persisting as expected and new sessions are being created with every command execution. What architectural change should you implement to enforce session persistence between bash commands?",
+    "options": {
+      "A": "Modify each subagent's configuration to include a 'session_persistence' parameter set to true.",
+      "B": "Ensure that the application logic maintains one persistent bash process across multiple tool calls, executing subsequent commands within this single session.",
+      "C": "Add a 'restart_session' flag in the tool_use block for every command execution to ensure state is reset and re-established.",
+      "D": "Use the 'persist_state' function provided by the Claude Agent SDK to maintain session persistence between bash commands."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. The documentation does not mention a 'session_persistence' parameter.",
+      "B": "Correct, as the documentation explicitly states that your application owns everything else: the shell process, the timeout, and the safety checks. You need to maintain one persistent bash session across multiple tool calls for state consistency.",
+      "C": "This approach would reset the session with every command execution, which contradicts the requirement of maintaining a persistent session between commands.",
+      "D": "The Claude Agent SDK does not provide a 'persist_state' function according to the documentation. This is an incorrect and non-existent feature."
+    },
+    "explanation": "In the context of the multi-agent research system using the Claude Agent SDK, ensuring that each subagent's bash commands are executed in a persistent session across multiple tool calls for state consistency is crucial. The correct approach involves maintaining one persistent bash process within your application logic and executing subsequent commands within this single session. This ensures that the working directory, environment variables, and any files created persist between command executions as required by the documentation."
+  },
+  {
+    "task_id": "3.1",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is developing a large-scale project using multiple subdirectories and needs to enforce consistent CLAUDE.md configurations across all directories without duplicating configuration files. You decide to use the @import syntax for modular references but are unsure how to properly scope these imports to avoid conflicts between different parts of your codebase. What is the best approach to ensure that each directory's CLAUDE.md file can import rules from a centralized location while maintaining project-specific configurations?",
+    "options": {
+      "A": "Create a single .claude/CLAUDE.md file at the root level and use @import statements in every subdirectory's CLAUDE.md files to reference this central configuration. This approach ensures that all directories inherit rules from the same source.",
+      "B": "Place common rule files in the .claude/rules directory at the project root and use @import statements with relative paths in each directory-level CLAUDE.md file to import these rules selectively, allowing for project-specific overrides as needed.",
+      "C": "Use environment variables within each subdirectory's CLAUDE.md file to dynamically load configurations from a centralized .claude/CLAUDE.md file located at the root level. This method allows for conditional imports based on the current directory context.",
+      "D": "Implement custom CLI commands that automatically generate or update CLAUDE.md files in all directories, ensuring consistency across the project without needing to manually manage @import statements."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This approach relies on a single point of failure for configuration management and does not allow for granular control over which rules are applied in different parts of the codebase. It also lacks flexibility for project-specific configurations.",
+      "B": "By placing common rule files in the .claude/rules directory at the root level, you can use @import statements with relative paths to selectively import these rules into each directory-level CLAUDE.md file. This approach ensures that all directories inherit from a centralized location while still allowing for project-specific overrides.",
+      "C": "While environment variables offer flexibility in configuration management, they do not provide the same level of control and clarity as @import statements within CLAUDE.md files. Additionally, this method does not leverage the modular organization capabilities provided by the .claude/rules directory structure.",
+      "D": "Custom CLI commands can automate the generation or update of CLAUDE.md files but introduce additional complexity in managing these scripts across different environments and configurations. This approach also bypasses the built-in @import functionality designed for this purpose."
+    },
+    "explanation": "The correct answer is B, as it aligns with the best practices outlined in the documentation for configuring CLAUDE.md files with appropriate hierarchy, scoping, and modular organization. By placing common rule files in the .claude/rules directory at the project root and using @import statements with relative paths to selectively import these rules into each directory-level CLAUDE.md file, you can ensure consistent configurations across all directories while maintaining flexibility for project-specific overrides. This approach leverages the built-in modular organization capabilities of Claude Code, providing a deterministic solution that avoids the pitfalls associated with single-point-of-failure and custom script-based approaches."
+  },
+  {
+    "task_id": "3.1",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is using Claude Code for a critical production system and has encountered an unexpected performance bug where certain API requests are timing out intermittently, leading to partial failures in the application logs. To address this issue, you need to configure CLAUDE.md files to ensure that all API calls are retried with exponential backoff when encountering timeouts or other transient errors. How should you modify your project-level .claude/CLAUDE.md file to achieve this?",
+    "options": {
+      "A": "@import './rules/retry_on_timeout' - This approach uses a custom rule file that defines retry logic for API calls, ensuring they are retried with exponential backoff when encountering timeouts.",
+      "B": "@import './rules/exponential_backoff' - This option imports a modular rule file specifying the use of exponential backoff and retries upon transient errors like timeouts or 503s.",
+      "C": "@import './rules/timeout_policy' - This configuration sets a global timeout policy for all API calls, which does not include retry logic but ensures that no call exceeds a specified duration.",
+      "D": "@import './rules/deterministic_response' - This rule enforces deterministic responses from the LLM by setting strict timeouts and ignoring transient errors."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "While this option introduces retry logic, it does not specifically address exponential backoff or handle a wide range of transient errors beyond just timeouts.",
+      "B": "This is the correct approach as it imports a modular rule file that configures API calls to use exponential backoff and retries upon encountering various types of transient errors, including timeouts and 503s. This ensures robustness in handling intermittent failures without overloading the system with excessive retries.",
+      "C": "Although this option sets a timeout policy for all API calls, it does not include retry logic which is crucial for recovering from transient issues like network hiccups or server overload.",
+      "D": "This rule focuses on enforcing deterministic responses by setting strict timeouts and ignoring errors, which contradicts the need to handle transient errors gracefully through retries."
+    },
+    "explanation": "The correct answer involves importing a modular rule file that specifies exponential backoff and retry logic for API calls when encountering transient errors. This approach ensures that the system can recover from temporary issues without compromising performance or reliability. The other options either lack necessary retry mechanisms, focus on strict timeouts rather than graceful error handling, or enforce deterministic responses which do not align with the requirement to handle intermittent failures effectively."
+  },
+  {
+    "task_id": "3.2",
+    "scenario": "Scenario 5: Claude Code for Continuous Integration",
+    "question": "During a code review process in your CI/CD pipeline, developers occasionally submit pull requests with vague commit messages that do not provide enough context for automated tools to generate meaningful feedback. To address this issue, you need to create a custom slash command that prompts developers to write descriptive commit messages before submitting their pull requests. How would you configure the SKILL.md file for this custom slash command?",
+    "options": {
+      "A": "Create a skill named 'commit-message-helper' with a description field stating: 'Generates descriptive commit messages by analyzing git diffs.' This approach relies on Claude to automatically generate commit messages based on code changes.",
+      "B": "Create a skill named 'require-descriptive-commits' with a description field stating: 'Prompts developers to write descriptive commit messages before submitting pull requests. Use when the user asks for help writing commit messages or reviewing staged changes.' This ensures that Claude prompts developers to provide detailed information about their commits.",
+      "C": "Create a skill named 'auto-commit-helper' with a description field stating: 'Automatically generates and applies commit messages based on code changes without developer intervention. Use when the user mentions git diffs or needs help with commit messages.' This approach assumes that Claude can automatically generate commit messages for any type of change.",
+      "D": "Create a skill named 'commit-message-inspector' with a description field stating: 'Evaluates existing commit messages and suggests improvements based on project conventions. Use when the user asks for feedback on commit message quality or consistency.' This approach focuses on post-commit analysis rather than pre-commit guidance."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option fails to provide a deterministic solution, as it relies on Claude's ability to automatically generate commit messages based on code changes. The description does not specify when the skill should be used, leading to potential misuse or underutilization.",
+      "B": "This option correctly configures the SKILL.md file with a clear and concise name and description that prompts developers to write descriptive commit messages before submitting pull requests. It aligns with the best practices for Skill authoring by providing specific triggers/contexts for when to use it, ensuring Claude can effectively guide developers.",
+      "C": "This option over-engineers the solution by assuming Claude can automatically generate commit messages without developer intervention. This approach is not deterministic and may lead to incorrect or irrelevant commit messages being generated.",
+      "D": "While this option provides useful feedback on existing commit messages, it does not address the primary issue of prompting developers to write descriptive commit messages before submitting pull requests. It focuses on post-commit analysis rather than pre-commit guidance."
+    },
+    "explanation": "The correct answer (B) demonstrates how to configure a custom slash command that prompts developers to write descriptive commit messages before submitting their pull requests, adhering to the best practices for Skill authoring as outlined in the documentation. The skill named 'require-descriptive-commits' is designed with a clear and concise description that specifies when it should be used, ensuring Claude can effectively guide developers to provide detailed information about their commits."
+  },
+  {
+    "task_id": "3.2",
+    "scenario": "Scenario 5: Claude Code for Continuous Integration",
+    "question": "During a recent production deployment, your team noticed that in 12% of cases, the agent skips certain tools due to unexpected edge cases not covered by existing test scenarios. You need to create a Skill to analyze logs and identify these skipped tools with actionable feedback. How would you structure this Skill according to best practices?",
+    "options": {
+      "A": "Create a Skill that uses regular expressions to parse log files for specific error messages related to tool skipping, then generates a report of the findings.",
+      "B": "Design a Skill in .claude/skills/ with SKILL.md frontmatter that includes metadata and instructions. The Skill should analyze logs for skipped tools using context-aware patterns and provide actionable feedback on how to address these issues.",
+      "C": "Develop a generic script outside of the Skills directory that scans log files manually and sends notifications via email or Slack.",
+      "D": "Configure an existing tool in your CI/CD pipeline to automatically rerun failed tests without creating a new Skill."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees, and does not leverage the structured approach provided by Skills.",
+      "B": "Correctly utilizes the SKILL.md frontmatter structure for metadata and instructions, ensuring Claude can discover and use this Skill effectively to analyze logs and provide actionable feedback.",
+      "C": "This option is suboptimal as it bypasses the structured Skill creation process recommended in the documentation, leading to potential maintenance issues and lack of integration with other system components.",
+      "D": "Incorrectly assumes that existing tools can handle edge cases without additional configuration or context-aware analysis provided by a custom Skill."
+    },
+    "explanation": "The correct answer involves creating a Skill within the .claude/skills/ directory, adhering to best practices outlined in the documentation. This approach ensures Claude can discover and utilize the Skill effectively for analyzing logs and providing actionable feedback on skipped tools due to edge cases. The SKILL.md frontmatter is crucial for metadata and instructions, enabling Claude to understand when and how to use this Skill."
+  },
+  {
+    "task_id": "3.3",
+    "scenario": "Scenario 5: Claude Code for Continuous Integration",
+    "question": "You are integrating Claude Code into your CI/CD pipeline and need to ensure that specific rules apply only when editing files within the 'features' directory, but not its subdirectories. Which of the following configurations in a .claude/rules/features.yml file would correctly achieve this?",
+    "options": {
+      "A": "paths: ['features/**']",
+      "B": "paths: ['features/!(**/*)']",
+      "C": "paths: ['features/', '!features/**/*']",
+      "D": "paths: ['features', '!(features/**/*)']"
+    },
+    "correct_answer": "D",
+    "option_explanations": {
+      "A": "This option would apply the rules to all files within and below the features directory, including subdirectories. It does not exclude subdirectory files.",
+      "B": "The syntax '!features/**/*' is incorrect for excluding subdirectories; it incorrectly matches file patterns rather than directories.",
+      "C": "While this option attempts to include only the 'features/' directory itself, the exclusion pattern '!features/**/*' is invalid and does not correctly exclude subdirectory files.",
+      "D": "This configuration correctly includes the 'features/' directory while excluding all its subdirectories using the negative match syntax. It ensures that rules apply only within the specified directory without affecting subdirectories."
+    },
+    "explanation": "The correct answer, D, uses a valid YAML frontmatter paths field with glob patterns to specify that Claude Code should load and enforce specific rules only when editing files directly in the 'features' directory but not its subdirectories. This approach ensures targeted rule application without unintended side effects on other parts of the codebase."
+  },
+  {
+    "task_id": "3.3",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team has encountered a production failure where certain conditional rules in .claude/rules/ files are not being applied as expected, leading to inconsistent behavior across different directories. The logs indicate that the issue arises when editing files outside of the specified glob patterns defined in these rule files. To address this, you need to ensure that path-specific rules load correctly for all relevant subprojects within your codebase.",
+    "options": {
+      "A": "Create a single CLAUDE.md file at the root level with generic conventions applicable across all directories.",
+      "B": "Update each .claude/rules/ file to include more comprehensive glob patterns that cover all necessary paths and ensure rules load conditionally based on these patterns.",
+      "C": "Implement a custom script to manually check and apply rule files before editing any code, ensuring consistency but adding overhead.",
+      "D": "Use the undocumented 'path_specific_rules' parameter in CLAUDE.md to enforce conditional loading of rules across directories."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This approach fails to address the specific issue of inconsistent rule application due to path-specific glob patterns. It relies on a generic solution that does not solve the problem of conditional rule loading based on file paths.",
+      "B": "Correctly addresses the need for conditional rule loading by updating .claude/rules/ files with comprehensive glob patterns, ensuring rules are applied only when editing matching files across different directories.",
+      "C": "While this method ensures consistency, it introduces unnecessary overhead and manual intervention, which is not a scalable or efficient solution to the problem.",
+      "D": "This option references an undocumented feature that does not exist in the current SDK version, making it invalid and unverifiable."
+    },
+    "explanation": "The correct approach involves updating .claude/rules/ files with more comprehensive glob patterns to ensure conditional rule loading based on file paths. This solution directly addresses the issue of inconsistent behavior across directories by ensuring rules are applied only when editing matching files, as per the documentation guidelines for path-specific rules."
+  },
+  {
+    "task_id": "3.4",
+    "scenario": "Scenario 5: Claude Code for Continuous Integration",
+    "question": "Your production logs indicate that in certain edge cases, your agent fails to execute a specific tool due to an unexpected 'tool_use' stop_reason. This occurs intermittently and is not reproducible through direct execution prompts. To address this issue, you need to design a prompt that ensures the tool executes reliably under all conditions.",
+    "options": {
+      "A": "Use plan mode with a detailed step-by-step instruction for each action to ensure the agent follows a strict sequence of steps.",
+      "B": "Implement an agentic loop with explicit checks and retries for 'tool_use' stop_reasons, ensuring robust execution in CI/CD environments.",
+      "C": "Modify the system prompt to include additional context about the tool's purpose and expected behavior, hoping this will guide Claude towards correct execution.",
+      "D": "Utilize a new experimental feature called 'force_execution', which guarantees that all tools are executed regardless of stop_reason."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "While plan mode can be useful for complex tasks, it does not inherently address the issue of intermittent failures due to specific stop_reasons. This approach may lead to overly verbose and inflexible prompts.",
+      "B": "Implementing an agentic loop with explicit checks and retries is a robust solution that aligns with the documentation's guidance on handling 'tool_use' stop_reasons in CI/CD environments. It ensures reliable execution by managing the lifecycle of requests and responses effectively.",
+      "C": "Modifying system prompts to include additional context may influence Claude's behavior but does not provide deterministic guarantees against intermittent failures. This approach is less reliable than implementing an agentic loop with explicit checks.",
+      "D": "The 'force_execution' feature mentioned here is a distractor as it does not exist in the current documentation and SDK features. It represents an over-engineered solution that would introduce unnecessary complexity without addressing the root cause of the issue."
+    },
+    "explanation": "To address intermittent failures due to unexpected 'tool_use' stop_reasons, implementing an agentic loop with explicit checks and retries is the most effective approach. This method ensures robust execution by managing the lifecycle of requests and responses effectively, aligning with the documentation's guidance on handling such scenarios in CI/CD environments."
+  },
+  {
+    "task_id": "3.4",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is working on a large-scale refactoring project that involves multiple files and complex architectural decisions. During this process, one of your developers decides to use direct execution mode in Claude Code for all tasks without considering the nature or complexity of each task. This approach leads to unexpected behaviors such as inconsistent results and missed opportunities for optimization due to lack of planning.",
+    "options": {
+      "A": "Continue using direct execution mode for all tasks, assuming it will eventually stabilize with more use.",
+      "B": "Switch to plan mode for complex tasks involving large-scale changes, multiple valid approaches, architectural decisions, or multi-file modifications; and stick to direct execution for simple well-scoped changes.",
+      "C": "Ignore the issue and manually document every step of the refactoring process without using Claude Code's features.",
+      "D": "Use a custom CLAUDE.md configuration that forces plan mode on all tasks regardless of their complexity."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option relies on probabilistic LLM compliance instead of deterministic guarantees. Direct execution mode is not designed for complex, multi-step processes and can lead to inconsistent results.",
+      "B": "This approach aligns with the documentation's recommendation for using plan mode in scenarios requiring large-scale changes or architectural decisions, ensuring consistent and optimized outcomes.",
+      "C": "Manual documentation without leveraging Claude Code’s features would be inefficient and could miss out on automation benefits provided by the tool.",
+      "D": "Forcing plan mode universally disregards the flexibility needed for simple tasks that can benefit from direct execution. This approach is overly restrictive and may hinder productivity."
+    },
+    "explanation": "The correct solution involves understanding when to use plan mode versus direct execution based on task complexity. Plan mode is designed for large-scale changes, complex architectural decisions, or multi-file modifications where a structured planning phase can lead to more consistent and optimized outcomes. Direct execution mode is better suited for simple, well-scoped tasks that do not require extensive planning. Ignoring these distinctions can result in inconsistent results and missed optimization opportunities."
+  },
+  {
+    "task_id": "3.5",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team has encountered a production failure where certain API calls in your application are timing out intermittently, leading to partial failures in the user interface. After reviewing logs, you notice that these timeouts occur when the system is under heavy load and specific API endpoints are being queried frequently. You decide to use Claude Code's debugging capabilities to address this issue. What is the most effective approach to mitigate this performance bottleneck using Claude Code?",
+    "options": {
+      "A": "Implement a retry mechanism with exponential backoff for failed API calls in your application code.",
+      "B": "Configure Claude Code to generate a load balancer configuration that distributes requests more evenly across available servers.",
+      "C": "Create a custom slash command in Claude Code to automatically scale up server resources during peak usage times based on real-time monitoring data.",
+      "D": "Use the non-existent 'performance_optimizer' feature in Claude Code to auto-tune API response times."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "While a retry mechanism can help with transient failures, it does not address the underlying issue of load distribution and may exacerbate performance issues during peak loads.",
+      "B": "Configuring Claude Code to generate a load balancer configuration is an effective way to distribute requests more evenly across available servers, thereby reducing the load on individual endpoints and improving overall system performance.",
+      "C": "Creating a custom slash command for auto-scaling can be complex and may introduce additional latency. It's generally better to focus on optimizing resource utilization through load balancing first before considering dynamic scaling solutions.",
+      "D": "The 'performance_optimizer' feature does not exist in Claude Code, making this option incorrect."
+    },
+    "explanation": "To effectively mitigate the performance bottleneck caused by intermittent API timeouts under heavy load, configuring Claude Code to generate a load balancer configuration is the most direct and effective approach. This solution leverages existing capabilities within Claude Code to distribute requests more evenly across available servers, thereby reducing the likelihood of individual endpoints becoming overloaded and timing out."
+  },
+  {
+    "task_id": "3.5",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is integrating Claude Code into a CI/CD pipeline for automated code generation and refactoring tasks. However, you notice that the generated code snippets are not consistent across different runs due to varying environment configurations. To ensure deterministic behavior, which of the following approaches should be used in your .claude/rules/config.yaml file?",
+    "options": {
+      "A": "Set the flag --print to true for all commands to ensure output is logged.",
+      "B": "Define a consistent set of rules and constraints using the pipeline_integration syntax to enforce deterministic behavior across runs.",
+      "C": "Use the -p flag in every command line invocation to print intermediate steps and debug inconsistencies.",
+      "D": "Configure environment variables for each task separately without centralizing them in the .claude/rules/config.yaml file."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option relies on logging output rather than ensuring deterministic behavior, which does not address the core issue of inconsistent code generation.",
+      "B": "Defining rules and constraints in .claude/rules/config.yaml ensures that all pipeline runs are consistent by enforcing a standardized set of configurations and behaviors.",
+      "C": "Using -p flag for debugging is useful but does not solve the problem of ensuring deterministic behavior across different CI/CD environments.",
+      "D": "Configuring environment variables separately can lead to inconsistencies and makes it harder to maintain consistency across multiple projects or team members."
+    },
+    "explanation": "To ensure that code generation tasks are consistent and deterministic in a CI/CD pipeline, it is crucial to centralize configurations and rules. Option B correctly suggests using the .claude/rules/config.yaml file to define these rules, ensuring that all runs adhere to the same set of constraints regardless of the environment or user executing them."
+  },
+  {
+    "task_id": "3.6",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is integrating Claude Code into their CI/CD pipeline to automatically generate code reviews for pull requests. However, developers are manually triggering the routine instead of letting the pipeline handle it, leading to inconsistent review quality and delays. To mitigate this issue deterministically, which of the following approaches should be taken?",
+    "options": {
+      "A": "Create a custom slash command in Claude Code that developers can use to trigger reviews.",
+      "B": "Configure an API trigger in Claude Code to automatically start the routine when a pull request is created or updated.",
+      "C": "Instruct developers to manually copy and paste the routine URL into their browser every time they need a review.",
+      "D": "Use the --json-schema flag with Claude Code CLI to generate reviews directly from the command line."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic user compliance and does not ensure that every pull request will receive an automated review.",
+      "B": "Configuring an API trigger ensures that the routine is automatically started based on specific CI/CD events, providing a deterministic solution to consistent code reviews.",
+      "C": "Manual intervention defeats the purpose of automation in CI/CD pipelines and introduces human error and inconsistency.",
+      "D": "--json-schema flag is used for generating structured output formats but does not directly trigger routines or automate review processes."
+    },
+    "explanation": "The correct approach to mitigate inconsistent code reviews due to manual triggering by developers is to configure an API trigger in Claude Code. This ensures that the routine starts automatically when a pull request is created or updated, providing consistent and deterministic quality assurance without relying on human intervention. The other options either introduce unnecessary variability (A), defeat automation goals (C), or are unrelated to automated triggers (D)."
+  },
+  {
+    "task_id": "3.6",
+    "scenario": "Scenario 5: Claude Code for Continuous Integration",
+    "question": "You are integrating Claude Code into your CI/CD pipeline to automatically review pull requests and provide feedback. Your goal is to ensure that the Claude Code routine runs in response to a failed build event, but you encounter an issue where the routine does not trigger when expected. Upon investigation, you find that the environment variables for the API call are correctly set up, but the routine still fails silently without any error messages or logs. What could be the reason for this behavior?",
+    "options": {
+      "A": "The routine_id is incorrectly prefixed with 'routine_' instead of 'trig_' as specified in the documentation.",
+      "B": "The anthropic-beta header value does not match the experimental version required by the endpoint, causing it to return a silent failure.",
+      "C": "You are using an outdated API version that no longer supports routine triggers via HTTP calls.",
+      "D": "Your CI/CD pipeline is configured to run in non-interactive mode (-p flag), which prevents any external API calls from being made."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on a specific naming convention issue, but the documentation clearly states that routine_id should be prefixed with 'trig_' rather than 'routine_', making this a deterministic error.",
+      "B": "The correct answer. The endpoint requires an exact experimental beta header value to function correctly; mismatching or missing this value results in silent failures due to the experimental nature of the API.",
+      "C": "This option suggests using an outdated version, but the documentation indicates that the routine fire endpoint is part of a stable or standard beta path namespace and does not explicitly state it's deprecated.",
+      "D": "Using non-interactive mode (-p flag) affects how Claude Code interacts with the terminal interface but does not prevent API calls from being made."
+    },
+    "explanation": "The correct answer identifies that the anthropic-beta header value must match exactly what is required by the endpoint. This is a critical requirement for experimental APIs, as they often rely on specific beta versions to function correctly and avoid silent failures due to version mismatches or unsupported features. The other options either suggest issues with naming conventions (A), outdated API usage (C), or incorrect CLI flags (D) that do not directly address the problem of silent failure in an otherwise properly configured environment."
+  },
+  {
+    "task_id": "4.1",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "You are developing a structured data extraction system using Claude to process legal documents and extract key information such as contract terms, dates, and parties involved. During testing, you notice that the model occasionally misinterprets certain sections of the document, leading to false positives in the extracted data. To mitigate this issue, which of the following approaches should you take when designing your prompt?",
+    "options": {
+      "A": "Instruct Claude to be conservative and avoid extracting information unless it is absolutely certain.",
+      "B": "Provide explicit criteria for what constitutes a valid extraction, including examples of correct and incorrect extractions.",
+      "C": "Use probabilistic language in the instructions to allow Claude some flexibility in its interpretation.",
+      "D": "Increase the model's confidence threshold globally to reduce false positives across all prompts."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. Vague instructions like 'be conservative' do not provide clear guidance and can lead to inconsistent results.",
+      "B": "Explicit criteria over vague instructions ensure that Claude understands the exact requirements for valid extractions, reducing false positives and improving developer trust in the system.",
+      "C": "Using probabilistic language introduces ambiguity and does not offer deterministic guarantees. This approach may result in inconsistent performance across different documents or contexts.",
+      "D": "Increasing the confidence threshold globally is an overgeneralized solution that might reduce precision but also decrease recall, leading to missed valid extractions."
+    },
+    "explanation": "To mitigate false positives in a structured data extraction system using Claude, it's crucial to design prompts with explicit criteria rather than relying on vague instructions. Providing clear examples of correct and incorrect extractions helps Claude understand the specific requirements for valid outputs. This approach ensures deterministic guarantees by reducing ambiguity and improving precision without sacrificing recall unnecessarily."
+  },
+  {
+    "task_id": "4.1",
+    "scenario": "Scenario 5: Claude Code for Continuous Integration",
+    "question": "Your CI pipeline has encountered a production failure where an edge case causes unexpected behavior in your application logs. Specifically, when processing large datasets, the system occasionally fails to correctly identify and handle null values in certain fields, leading to data corruption or loss. You need to design a prompt for Claude that will accurately detect these issues with high confidence while minimizing false positives.",
+    "options": {
+      "A": "Design a prompt that asks Claude to be conservative when evaluating code, ensuring it avoids any potential errors by default.",
+      "B": "Create a specific prompt that includes explicit criteria for identifying null values in fields and provides concrete examples of how these should be handled. Include severity levels based on the impact of data corruption or loss.",
+      "C": "Implement a generic error handling mechanism within Claude's response generation to catch all potential issues without specifying exact conditions.",
+      "D": "Use undocumented features of the Claude API to automatically detect and correct null value errors in real-time during code review."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees, leading to inconsistent results and high false positive rates.",
+      "B": "Explicit criteria over vague instructions ensure Claude can accurately detect null value issues with concrete examples for context. This approach minimizes false positives by focusing on specific conditions rather than general behavior.",
+      "C": "An overly broad error handling mechanism may catch too many cases, leading to a high rate of false positives and unnecessary alerts or corrections.",
+      "D": "This option utilizes non-existent SDK features and would not provide the deterministic guarantees needed for reliable CI/CD integration."
+    },
+    "explanation": "The correct approach is to design prompts with explicit criteria that Claude can follow precisely. This includes providing specific examples of null value handling, which helps Claude understand exactly what behavior is expected in edge cases. By including severity levels and concrete code examples, the prompt ensures high confidence in detecting issues while minimizing false positives. The documentation emphasizes the importance of clear instructions over vague guidelines to maintain developer trust."
+  },
+  {
+    "task_id": "4.2",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "You are developing a structured data extraction system using Claude to extract information from legal documents and validate the output against JSON schemas. The system must handle edge cases such as ambiguous or incomplete sentences gracefully, while maintaining high accuracy. During testing, you notice that Claude occasionally extracts incorrect data due to its interpretation of vague instructions within prompts. To address this issue, which approach should you take based on the provided documentation?",
+    "options": {
+      "A": "Use generic instructions like 'be conservative' and rely on Claude's ability to infer your intent.",
+      "B": "Design prompts with explicit criteria for each type of data extraction task, providing specific categorical criteria to improve precision and reduce false positives.",
+      "C": "Implement a machine learning model that predicts the best prompt based on historical performance data.",
+      "D": "Increase the max_tokens parameter in your API request to allow Claude more space to interpret ambiguous instructions."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees, leading to inconsistent results and eroding developer trust.",
+      "B": "Explicit criteria over vague instructions improve precision and reduce false positives by providing clear guidance for Claude's output format, tone, and structure.",
+      "C": "While machine learning models can be useful in other contexts, they do not offer a deterministic solution for prompt engineering and may introduce additional complexity without guaranteed improvements.",
+      "D": "Increasing max_tokens does not address the root cause of vague instructions leading to incorrect data extraction; it merely provides more space for Claude to interpret ambiguous prompts."
+    },
+    "explanation": "The correct approach is to design prompts with explicit criteria, as outlined in the documentation. This method ensures that Claude receives clear and specific guidance on what is expected from each prompt, reducing ambiguity and improving the accuracy of data extraction tasks. The other options either rely on probabilistic outcomes or introduce unnecessary complexity without addressing the core issue."
+  },
+  {
+    "task_id": "4.2",
+    "scenario": "Scenario 5: Claude Code for Continuous Integration",
+    "question": "You are integrating Claude into your CI/CD pipeline to automatically review code changes and provide feedback on pull requests. During testing, you notice that the system occasionally generates false positives in its automated reviews due to ambiguous cases where it's unclear whether a piece of code adheres to best practices or not. To address this issue, which approach should you take to minimize false positives while maintaining actionable feedback?",
+    "options": {
+      "A": "Programmatically enforce strict rules for all possible coding scenarios in the CI/CD pipeline.",
+      "B": "Design prompts with explicit criteria and few-shot examples that guide Claude's output format and tone, ensuring high-confidence responses are provided only when supported by concrete evidence or code examples.",
+      "C": "Rely on general instructions like 'be conservative' to reduce false positives across all ambiguous cases.",
+      "D": "Use undocumented API parameters to fine-tune Claude's behavior in the CI/CD pipeline."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This approach relies on probabilistic LLM compliance instead of deterministic guarantees, leading to potential misinterpretation and over-reliance on the model's ability to infer rules.",
+      "B": "Designing prompts with explicit criteria and few-shot examples ensures Claude provides actionable feedback by reducing ambiguity. This method leverages Claude's ability to generalize from specific examples and improves output consistency and quality.",
+      "C": "General instructions like 'be conservative' fail compared to specific categorical criteria, as they do not provide clear guidelines for Claude to follow, leading to inconsistent results and eroding developer trust due to high false positive rates.",
+      "D": "Undocumented API parameters are non-existent features that may cause issues in the CI/CD pipeline. Relying on such parameters can lead to instability and maintenance problems."
+    },
+    "explanation": "To minimize false positives while maintaining actionable feedback, it is crucial to design prompts with explicit criteria and few-shot examples. This approach ensures Claude's output format and tone are consistent by providing clear guidelines for the model to follow. By using concrete code examples and specific categorical criteria, developers can reduce ambiguity and improve precision in automated reviews. Relying on general instructions or undocumented API parameters is not recommended as they may lead to inconsistent results and maintenance issues."
+  },
+  {
+    "task_id": "4.3",
+    "scenario": "Scenario 5: Claude Code for Continuous Integration",
+    "question": "Your pipeline script hangs indefinitely in CI when attempting to integrate a custom tool that should execute code based on provided JSON schema inputs. The issue arises specifically during the execution phase of the tool, where the script is supposed to handle the callback and return results back into the conversation flow. Given this context, which configuration or syntax adjustment would ensure proper handling of the tool's execution loop?",
+    "options": {
+      "A": "Modify the pipeline script to include a --print flag for debugging purposes.",
+      "B": "Ensure that your application defines a while loop in the callback function, checking for stop_reason: 'tool_use' and executing tools accordingly until the loop exits on another stop reason.",
+      "C": "Add an additional .claude/rules/ configuration file to specify tool execution rules globally across all projects.",
+      "D": "Implement a custom --execute flag within your pipeline script to force immediate execution of the tool without waiting for the model's decision."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. Debugging flags do not address the core issue of loop execution and handling.",
+      "B": "Validates the correct engineering solution based strictly on docs, ensuring that the application drives a loop by checking for stop_reason: 'tool_use' to execute tools until another reason causes the loop to exit.",
+      "C": "Suboptimal or incorrect option as it introduces unnecessary complexity without addressing the specific execution phase issue. Configuration files are not relevant here.",
+      "D": "Identifies non-existent features or syntax errors in this choice, as forcing immediate execution bypasses the model's decision-making process and does not align with how tool use is designed to work."
+    },
+    "explanation": "The correct approach involves defining a while loop within your application’s callback function that checks for stop_reason: 'tool_use'. This ensures proper handling of the tool's execution phase, allowing the model to decide when to execute tools and return results back into the conversation flow. The loop continues until another stop reason (such as 'end_turn', 'max_tokens', or 'stop_sequence') causes it to exit. This solution is directly verifiable using the provided documentation context on how tool use works."
+  },
+  {
+    "task_id": "4.3",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "During a production rollout of your structured data extraction system using Claude, you notice that in 12% of cases, the agent skips tool_use blocks entirely without executing any tools or returning results. Production logs show that these failures occur when the input JSON schema is overly complex and includes nested objects with optional fields marked as 'other'. What is the most likely cause of this issue?",
+    "options": {
+      "A": "The Claude model encounters a syntax error due to improperly formatted JSON schemas, causing it to skip tool_use blocks.",
+      "B": "Claude's agentic loop fails to recognize and process complex nested objects with optional fields marked as 'other', leading to skipped tool_use blocks.",
+      "C": "There is an issue with the server-side infrastructure that prevents execution of client-executed tools when dealing with overly complex schemas.",
+      "D": "The Claude model has a built-in limit on the number of nested levels it can process, causing it to skip processing beyond this limit."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. While syntax errors could cause issues, Claude's agentic loop is designed to handle JSON schemas robustly.",
+      "B": "Claude's tool use mechanism may struggle with overly complex nested objects and optional fields marked as 'other', leading it to skip processing these blocks entirely due to ambiguity or complexity in the schema definition.",
+      "C": "This option incorrectly attributes the issue to server-side infrastructure rather than the agentic loop behavior of Claude. The problem is more likely related to how Claude processes the input JSON schema.",
+      "D": "While there might be limits on processing depth, this specific scenario points towards issues with handling complex schemas and optional fields marked as 'other', not a strict limit on nested levels."
+    },
+    "explanation": "The correct answer identifies that Claude's agentic loop may fail to process complex JSON schemas containing nested objects with optional fields marked as 'other'. This is due to the inherent complexity and potential ambiguity in such schema definitions, leading Claude to skip these blocks entirely. The documentation emphasizes the importance of clear tool descriptions and boundary explanations to avoid misrouting or failure in processing. While syntax errors could cause issues, the primary issue here is related to how Claude processes complex schemas rather than a strict limit on nested levels or server-side infrastructure problems."
+  },
+  {
+    "task_id": "4.4",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "You are developing a structured data extraction system using Claude and encounter an issue where requests to Claude Fable 5 occasionally fail with a refusal, requiring fallback to Claude Opus 4.8. Your pipeline script hangs indefinitely in CI when it encounters such refusals without proper handling. How should you modify your retry logic to ensure that the fallback credit token is correctly utilized for subsequent retries?",
+    "options": {
+      "A": "Modify the request body to include a new header 'fallback-credit' and send the same request again.",
+      "B": "Echo the refusal's content in the assistant message of the retry request, set the model to Claude Opus 4.8, and add the fallback_credit_token parameter as described in the documentation.",
+      "C": "Use a custom error handler that retries the original request without any modifications or tokens.",
+      "D": "Implement a fallback mechanism using an SDK feature called 'retry_with_fallback' which automatically handles all retry scenarios."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option fails because it introduces a new header without following the structured error context and token redemption process as specified in the documentation. It does not ensure deterministic handling of fallback credits.",
+      "B": "Correctly implements the retry logic by echoing the refusal's content, setting the model to Claude Opus 4.8, and adding the fallback_credit_token parameter as described in the documentation, ensuring proper utilization of fallback credit tokens for retries.",
+      "C": "This approach fails because it does not handle refusals with fallback credits properly, leading to indefinite hangs or repeated failures without utilizing the available fallback mechanisms.",
+      "D": "The 'retry_with_fallback' feature is non-existent in the provided documentation. This distractor reflects an over-engineered solution that relies on a hypothetical SDK feature instead of following documented procedures."
+    },
+    "explanation": "To ensure proper handling of refusals and retries, it's crucial to follow the structured error context as described in the Claude Platform Docs for fallback credit. The correct approach involves modifying the retry request body to include the refusal content echoed by the assistant message, setting the model to a permitted fallback target (Claude Opus 4.8), and adding the fallback_credit_token parameter. This ensures that the system can deterministically handle refusals with fallback credits without hanging or failing indefinitely."
+  },
+  {
+    "task_id": "4.4",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "Your pipeline script hangs indefinitely in CI when attempting to extract structured data from unstructured documents using Claude Fable 5, and you've decided to implement a fallback mechanism to Claude Opus 4.8 as per the documentation. The refusal response includes a fallback_credit_token. How should you modify your request body for the retry attempt against Claude Opus 4.8?",
+    "options": {
+      "A": "Set model to claude-opus-4-8 and add 'fallback_credit' with the token value.",
+      "B": "Set model to claude-opus-4-8, add 'fallback_credit_token' with the token value, and adjust the messages array based on fallback_has_prefill_claim as per the documentation.",
+      "C": "Add a new header 'Anthropic-Fallback-Credit' with the token value and retry without modifying the request body.",
+      "D": "Set model to claude-opus-4-8 and add 'fallback_credit_token' but ignore the fallback_has_prefill_claim field."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option incorrectly names the parameter as 'fallback_credit', which does not exist according to the documentation. The correct parameter is 'fallback_credit_token'.",
+      "B": "Correctly sets the model, adds the fallback_credit_token with the token value from the refusal response, and adjusts the messages array based on the fallback_has_prefill_claim field as per the documentation.",
+      "C": "This option suggests adding a new header instead of modifying the request body. The correct approach is to modify the request body according to the provided guidelines.",
+      "D": "Ignoring the fallback_has_prefill_claim field can lead to incorrect retry behavior, potentially causing the assistant's response to start over rather than continuing from where it left off."
+    },
+    "explanation": "The correct answer involves setting the model to claude-opus-4-8 and adding 'fallback_credit_token' with the token value obtained from the refusal response. Additionally, adjusting the messages array based on the fallback_has_prefill_claim field ensures that the retry mechanism continues where the previous request left off if applicable. This approach is directly supported by the documentation provided for implementing error propagation strategies across multi-agent systems."
+  },
+  {
+    "task_id": "4.5",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "You are developing a pipeline for extracting structured data from unstructured documents using Claude's Message Batches API. Your pipeline script hangs indefinitely in CI when attempting to process large batches of requests due to incorrect configuration flags and syntax issues. To resolve this, you need to ensure that your batch processing strategy is correctly configured with the necessary parameters and flags. Which of the following configurations should be used to properly integrate Claude's Message Batches API into your pipeline script?",
+    "options": {
+      "A": "Using the --stream flag in your CLI command to enable streaming responses for each request within a batch.",
+      "B": "Specifying the custom_id parameter for each individual request within a batch to ensure proper correlation of asynchronous responses.",
+      "C": "Setting the max_tokens parameter to 0 for all requests within a batch to optimize cache pre-warming.",
+      "D": "Including the --multi-turn flag in your CLI command to support multi-turn tool calling within a single batch."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. The Message Batches API does not support streaming responses for individual requests within a batch.",
+      "B": "Correct engineering solution based strictly on docs. Specifying the custom_id parameter ensures that each request in the batch can be uniquely identified and correlated with its corresponding asynchronous response, which is crucial for proper integration into your pipeline script.",
+      "C": "Alternative incorrect option / over-engineered approach. Setting max_tokens to 0 within a batch is not supported since it would result in an ephemeral cache entry that likely expires before the follow-up request runs.",
+      "D": "Incorrect option utilizing non-existent SDK features. The Message Batches API does not support multi-turn tool calling, which is a feature intended for synchronous requests."
+    },
+    "explanation": "The correct answer involves specifying the custom_id parameter for each individual request within a batch to ensure proper correlation of asynchronous responses. This approach aligns with the documentation's guidance on using unique identifiers for each request in a batch and is essential for integrating Claude's Message Batches API into your pipeline script effectively. The other options either rely on unsupported features or incorrect configurations that would lead to issues such as hanging scripts due to invalid syntax or parameters."
+  },
+  {
+    "task_id": "4.5",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "You are developing a pipeline for structured data extraction using Claude's Message Batches API to process large volumes of unstructured documents asynchronously. Your pipeline script hangs indefinitely in CI when attempting to batch process requests due to incorrect configuration. Which of the following configurations should you use to ensure your batch processing requests are correctly formatted and processed by the Message Batches API?",
+    "options": {
+      "A": "client.messages.create(requests=[{'custom_id': 'request1', 'params': {'model': 'claude-opus-4-8', 'max_tokens': 1024, 'messages': [{'role': 'user', 'content': 'Extract data from document'}]}}])",
+      "B": "client.messages.batches.create(requests=[Request(custom_id='request1', params=MessageCreateParamsNonStreaming(model='claude-opus-4-8', max_tokens=1024, messages=[{'role': 'user', 'content': 'Extract data from document'}]))])",
+      "C": "client.messages.batch_process(requests=[{'custom_id': 'request1', 'params': {'model': 'claude-opus-4-8', 'max_tokens': 1024, 'messages': [{'role': 'user', 'content': 'Extract data from document'}]}}])",
+      "D": "client.messages.create_batch(requests=[{'custom_id': 'request1', 'params': {'model': 'claude-opus-4-8', 'max_tokens': 1024, 'messages': [{'role': 'user', 'content': 'Extract data from document'}]}}])"
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option uses the `create` method instead of the `batches.create` method for batch processing, which is incorrect and will result in synchronous request handling rather than asynchronous batch processing.",
+      "B": "Correct. This configuration properly utilizes the Message Batches API by calling `client.messages.batches.create`, passing a list of Request objects with appropriate parameters to ensure asynchronous batch processing.",
+      "C": "This option uses an undefined method `batch_process` which does not exist in the Claude SDK, leading to errors and incorrect handling of requests.",
+      "D": "This option incorrectly uses `create_batch` instead of `batches.create`, which is a non-existent method. The correct approach involves using the Message Batches API as documented."
+    },
+    "explanation": "The correct configuration for batch processing in Claude's Message Batches API involves calling the `client.messages.batches.create` method with a list of Request objects, each containing necessary parameters such as custom_id and params. This ensures that requests are processed asynchronously within the specified 24-hour window without latency SLA, achieving cost savings and efficient throughput for non-blocking latency-tolerant workloads."
+  },
+  {
+    "task_id": "4.6",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "During a long-running data extraction process using Claude, your system occasionally experiences performance degradation due to context accumulation from multiple tool invocations and their results. You need to implement a solution that clears the oldest tool results while preserving critical information for ongoing tasks. Which of the following approaches correctly utilizes server-side context editing strategies to address this issue?",
+    "options": {
+      "A": "Implement client-side compaction using Python SDK's tool_runner, which will generate summaries and replace full conversation history.",
+      "B": "Specify clear_tool_uses_20250919 in the API request with a configured threshold for clearing oldest tool results when context grows beyond this limit.",
+      "C": "Enable thinking block clearing (clear_thinking_20251015) to aggressively manage conversation history by removing all prior thinking blocks.",
+      "D": "Use clear_at_least parameter in client-side compaction to ensure a minimum number of tokens are cleared each time, invalidating cached prompt prefixes."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. Client-side compaction is not the primary strategy for managing context in long-running conversations and does not directly address clearing specific content from conversation history.",
+      "B": "Correctly utilizes server-side context editing strategies to clear oldest tool results when context grows beyond a configured threshold, preserving critical information for ongoing tasks.",
+      "C": "This approach is suboptimal as it aggressively manages thinking blocks rather than focusing on clearing the oldest tool results and does not address the specific issue of performance degradation due to context accumulation from multiple tool invocations.",
+      "D": "Incorrect option utilizing non-existent SDK features. clear_at_least parameter is used in server-side strategy for invalidating cached prompt prefixes, but it's not a client-side compaction feature."
+    },
+    "explanation": "The correct approach involves specifying the clear_tool_uses_20250919 strategy in API requests to manage context accumulation from multiple tool invocations and their results. This server-side strategy clears the oldest tool results when conversation context grows beyond a configured threshold, ensuring critical information is preserved for ongoing tasks while mitigating performance degradation due to excessive context accumulation."
+  },
+  {
+    "task_id": "4.6",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "You are developing a structured data extraction system using Claude that processes large volumes of unstructured documents. The system uses tools to extract information and maintain context across multiple document reviews. However, you notice that the tool results from previous documents are accumulating in the conversation history, causing token budget issues for subsequent document processing. To address this, which approach should you implement to clear old tool results before each new document is processed?",
+    "options": {
+      "A": "Use the 'clear_thinking_20251015' strategy with keep set to false.",
+      "B": "Specify the 'clear_tool_uses_20250919' strategy in your API request before processing each new document.",
+      "C": "Implement a client-side compaction function that summarizes and replaces full conversation history after every tool use.",
+      "D": "Enable server-side context editing with the 'tool_result_summary_20260101' feature."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on clearing thinking blocks rather than tool results, which does not address the accumulation of tokens from previous document processing.",
+      "B": "The 'clear_tool_uses_20250919' strategy is designed to clear old tool results when conversation context grows beyond a configured threshold. This directly addresses the issue of token budget issues caused by accumulating tool results.",
+      "C": "While client-side compaction can be useful, it involves generating summaries and replacing full conversation history, which may not be necessary or efficient for simply clearing old tool results before processing new documents.",
+      "D": "The 'tool_result_summary_20260101' feature does not exist. The correct strategy is 'clear_tool_uses_20250919'."
+    },
+    "explanation": "To manage the accumulation of tool results in conversation history and prevent token budget issues, you should specify the 'clear_tool_uses_20250919' strategy in your API request before processing each new document. This approach clears old tool results from previous documents, ensuring that the context for each new document starts fresh without unnecessary token usage."
+  },
+  {
+    "task_id": "5.1",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is developing a CI/CD pipeline that integrates Claude Code for automated code generation and refactoring tasks. During testing, you notice that the pipeline hangs indefinitely when attempting to execute complex tool commands due to context overflow issues. To address this, which of the following configurations should be applied in your API request to ensure efficient context management?",
+    "options": {
+      "A": "Set max_tokens to a lower value to reduce the amount of context Claude retains.",
+      "B": "Enable the clear_tool_uses_20250919 strategy with the beta header context-management-2025-06-27 in your API request.",
+      "C": "Use the --print flag when invoking Claude Code commands to output verbose logs for debugging.",
+      "D": "Configure a custom .claude/rules/ file to manually clear tool results after each execution."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option fails because reducing max_tokens does not address the specific issue of context overflow caused by accumulating tool results. It is a generic solution that may reduce overall context but does not target the root cause.",
+      "B": "Correct, this approach directly addresses the problem by enabling the clear_tool_uses_20250919 strategy which clears old tool results as conversation context grows beyond a configured threshold, thus freeing up space for new commands and preventing context overflow issues.",
+      "C": "This option is incorrect because using --print to output verbose logs does not manage or reduce context. It only aids in debugging but does not solve the underlying issue of context overflow.",
+      "D": "While manually clearing tool results might seem like a solution, it relies on non-existent SDK features and would be impractical for automated pipelines due to its lack of integration with API requests."
+    },
+    "explanation": "The correct answer is B because enabling the clear_tool_uses_20250919 strategy through the beta header context-management-2025-06-27 in your API request directly addresses the issue of context overflow caused by accumulating tool results. This strategy clears old tool results as conversation context grows beyond a configured threshold, thus freeing up space for new commands and preventing context overflow issues without requiring manual intervention or altering generic parameters like max_tokens."
+  },
+  {
+    "task_id": "5.1",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "You are developing a structured data extraction system using Claude and encounter an issue where numerical values and dates critical for validation are being lost during long conversations due to progressive summarization. To mitigate this, you decide to implement context editing strategies as per the documentation. Which of the following approaches would be most effective in preserving these critical pieces of information while managing token budgets?",
+    "options": {
+      "A": "Implement client-side compaction using tool_runner in Python SDK without specifying any clear_tool_uses or clear_thinking parameters.",
+      "B": "Use server-side context editing with clear_tool_uses_20250919 and ensure that only the oldest tool results are cleared, keeping recent numerical values and dates intact.",
+      "C": "Rely on progressive summarization to automatically preserve all critical information without any additional configuration or intervention.",
+      "D": "Enable context editing with clear_thinking_20251015 but set keep parameter to 'all' to retain all thinking blocks, regardless of token budget constraints."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option fails because client-side compaction without specifying clear_tool_uses or clear_thinking parameters would not provide the fine-grained control needed to preserve critical numerical values and dates.",
+      "B": "Correct. By using server-side context editing with clear_tool_uses_20250919, you can ensure that only the oldest tool results are cleared while keeping recent data intact, thus preserving critical information like numerical values and dates.",
+      "C": "Progressive summarization does not automatically preserve all critical information; it risks losing numerical values and dates over time due to token budget constraints. This option fails because it relies on probabilistic LLM compliance instead of deterministic guarantees.",
+      "D": "Setting keep parameter to 'all' would retain all thinking blocks, which could lead to excessive token usage and context bloat, potentially causing the system to exceed its token budget. This approach is not optimal for managing long-running conversations effectively."
+    },
+    "explanation": "The correct answer involves using server-side context editing with clear_tool_uses_20250919 strategy to manage conversation context in a way that preserves critical numerical values and dates while maintaining an efficient token budget. This approach allows you to selectively clear older tool results, ensuring that recent data remains intact for validation purposes. The other options either fail to provide the necessary control or lead to inefficient use of tokens."
+  },
+  {
+    "task_id": "5.2",
+    "scenario": "Scenario 6: Structured Data Extraction",
+    "question": "You are developing a pipeline that uses Claude to extract structured data from unstructured documents and validate it against JSON schemas. During testing, you notice that the pipeline hangs indefinitely when processing certain edge cases due to an unexpected tool use scenario. To address this issue, which of the following configurations should be added to your .claude/rules/ directory to ensure proper handling and logging of such scenarios?",
+    "options": {
+      "A": "-p --print: This flag will print all logs to stdout, but it does not handle edge cases.",
+      "B": "Add a rule file named 'tool_use.json' with specific configurations for handling tool use events, including logging and error handling directives.",
+      "C": "Modify the pipeline script to include a generic try-catch block around Claude calls without specifying any additional configuration files or flags.",
+      "D": "Use an undocumented --debug flag that supposedly provides detailed logs but is known to cause performance issues."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. The print flag does not provide a structured way to handle edge cases or tool use scenarios.",
+      "B": "By adding a rule file with specific configurations for handling tool use events, you ensure that the pipeline can gracefully handle unexpected situations and log them appropriately.",
+      "C": "A generic try-catch block without additional configuration files or flags is insufficient as it does not provide detailed logging or error handling mechanisms tailored to edge cases.",
+      "D": "The --debug flag is non-existent in the current SDK version, and even if it existed, it would likely cause performance issues rather than solving the problem."
+    },
+    "explanation": "To ensure proper handling of unexpected tool use scenarios during structured data extraction with Claude, adding a rule file named 'tool_use.json' to your .claude/rules/ directory is necessary. This approach allows for detailed configuration and logging of such events, ensuring that the pipeline can handle edge cases gracefully without hanging indefinitely."
+  },
+  {
+    "task_id": "5.2",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "During a routine review of production logs for your multi-agent research system using Claude Agent SDK, you notice that in 10% of cases, the web search agent fails to return any results despite receiving valid queries. The logs indicate that the agent is attempting to use an external tool but encounters an error before completing its task. What could be causing this issue and how should it be resolved?",
+    "options": {
+      "A": "The web search agent's query formulation is too vague, leading to no results being returned.",
+      "B": "There is a misconfiguration in the external tool setup that prevents successful execution of queries.",
+      "C": "The system lacks sufficient computational resources to handle concurrent requests efficiently.",
+      "D": "The Claude Agent SDK version used does not support asynchronous task handling for web searches."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. While query formulation can affect results, the logs indicate an external tool error rather than a lack of relevant content.",
+      "B": "Correct engineering solution based strictly on docs. Misconfiguration in external tools setup is directly verifiable from production logs indicating failed attempts to use these tools.",
+      "C": "Explanation detailing why this option is suboptimal or incorrect. While resource limitations can affect performance, the specific error points towards a configuration issue rather than resource constraints.",
+      "D": "Explanation identifying non-existent features or syntax errors in this choice. The Claude Agent SDK supports asynchronous task handling; thus, version compatibility issues are unlikely to be the cause."
+    },
+    "explanation": "The correct answer is B because production logs indicate that the web search agent encounters an error when attempting to use external tools, suggesting a misconfiguration issue rather than vague queries or resource limitations. This aligns with the documentation's emphasis on explicit criteria for prompt engineering and structured output to ensure deterministic guarantees over probabilistic outcomes."
+  },
+  {
+    "task_id": "5.3",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is integrating Claude Compliance API into a multi-agent system for automated compliance checks. During testing, you encounter an error where the API returns a '409 Conflict' status code when attempting to update a resource that has been concurrently modified by another agent. To ensure robustness and prevent data inconsistencies, how should your system handle this specific error?",
+    "options": {
+      "A": "Silently log the error and continue with other tasks.",
+      "B": "Implement a retry mechanism after resolving any conflicts as indicated in the API documentation.",
+      "C": "Immediately terminate all related workflows to prevent further data inconsistencies.",
+      "D": "Use a custom error suppression middleware that ignores 409 errors."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This approach fails to address the root cause of the conflict, leading to potential data inconsistencies and unresolved issues in the multi-agent system.",
+      "B": "Correctly follows the API documentation's guidance on handling '409 Conflict' errors by resolving conflicts before retrying, ensuring robustness and consistency across agents.",
+      "C": "Terminating workflows immediately can prevent further updates but may also disrupt ongoing processes unnecessarily, leading to operational inefficiencies.",
+      "D": "Ignoring 409 errors through middleware does not resolve the underlying conflict and risks data integrity issues within the multi-agent system."
+    },
+    "explanation": "The correct approach is to implement a retry mechanism after resolving any conflicts as indicated in the API documentation. This ensures that your multi-agent system can handle concurrent modifications gracefully, maintaining data consistency and operational robustness. Silently logging errors or terminating workflows without addressing the conflict directly leads to potential inconsistencies and inefficiencies."
+  },
+  {
+    "task_id": "5.3",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "In your multi-agent research system using Claude Agent SDK, you encounter an issue where the web search agent fails to retrieve data due to a transient error (e.g., network issues). To ensure robustness and avoid unnecessary retries on non-retryable errors, how should you configure the pipeline integration syntax for handling such errors?",
+    "options": {
+      "A": "Set the --retry flag with a fixed number of attempts without checking the error type.",
+      "B": "Use the -p flag to print detailed error messages and check if the errorCategory is transient before retrying.",
+      "C": "Configure the pipeline to terminate immediately upon receiving any error message from the web search agent.",
+      "D": "Implement a custom --ignore-errors flag that suppresses all errors for this specific agent."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. Fixed retries without checking error type can lead to unnecessary or excessive retries, wasting resources.",
+      "B": "Validates the correct approach based on structured error handling as per Claude Platform Docs. Ensures that only transient errors are retried and others are handled appropriately.",
+      "C": "This is an over-engineered approach that fails to account for valid empty results or access failures which should not terminate workflows but rather be logged or reported.",
+      "D": "Identifies non-existent SDK features or syntax errors. The Claude Agent SDK does not support a generic --ignore-errors flag, and suppressing all errors can hide critical issues."
+    },
+    "explanation": "The correct approach involves configuring the pipeline to print detailed error messages using the -p flag and then checking if the errorCategory is transient before retrying. This ensures that only transient errors are retried, avoiding unnecessary retries on non-retryable errors such as validation or permission errors. The structured error context provided by the Claude Agent SDK allows for precise handling of different types of errors, ensuring robustness in multi-agent systems."
+  },
+  {
+    "task_id": "5.4",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is developing a complex web application using multiple microservices and you are integrating Claude into your development workflow to manage context effectively during long-running codebase explorations. You encounter an issue where the conversation context degrades over time, leading to suboptimal responses from Claude. To address this, you decide to implement server-side compaction with custom instructions for summarizing technical decisions and preserving key findings. How should you configure your Messages API request to enable this feature?",
+    "options": {
+      "A": "client = anthropic.Anthropic()\nmessages = [{'role': 'user', 'content': 'Summarize the current state of our web application development.'}]\nresponse = client.beta.messages.create(\n    betas=['compact-2026-01-12'],\n    model='claude-opus-4-8',\n    max_tokens=4096,\n    messages=messages,\n    context_management={'edits': [{'type': 'compact_20260112'}]}\n)",
+      "B": "client = anthropic.Anthropic()\nmessages = [{'role': 'user', 'content': 'Summarize the current state of our web application development.'}]\nresponse = client.beta.messages.create(\n    betas=['compact-2026-01-12'],\n    model='claude-opus-4-8',\n    max_tokens=4096,\n    messages=messages,\n    context_management={'edits': [{'type': 'compact_20260112', 'trigger': {'type': 'input_tokens', 'value': 150000}, 'instructions': 'Focus on preserving code snippets, variable names, and technical decisions.'}]}\n)",
+      "C": "client = anthropic.Anthropic()\nmessages = [{'role': 'user', 'content': 'Summarize the current state of our web application development.'}]\nresponse = client.beta.messages.create(\n    betas=['compact-2026-01-12'],\n    model='claude-opus-4-8',\n    max_tokens=4096,\n    messages=messages,\n    context_management={'edits': [{'type': 'compact_20250112', 'trigger': {'type': 'input_tokens', 'value': 150000}, 'instructions': 'Focus on preserving code snippets, variable names, and technical decisions.'}]}\n)",
+      "D": "client = anthropic.Anthropic()\nmessages = [{'role': 'user', 'content': 'Summarize the current state of our web application development.'}]\nresponse = client.beta.messages.create(\n    betas=['compact-2026-01-12'],\n    model='claude-opus-4-8',\n    max_tokens=4096,\n    messages=messages,\n    context_management={'edits': [{'type': 'compact_20260112', 'trigger': {'type': 'input_bytes', 'value': 150000}, 'instructions': 'Focus on preserving code snippets, variable names, and technical decisions.'}]}\n)"
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This option fails to specify the trigger type or custom instructions for summarization. It relies solely on default compaction behavior without customization.",
+      "B": "Correctly configures server-side compaction with a specific token threshold and custom instructions for summarizing technical decisions, ensuring deterministic context management.",
+      "C": "Incorrect due to an invalid strategy identifier ('compact_20250112') which does not exist in the documentation. This reflects an obsolete or non-existent feature.",
+      "D": "Incorrect because it uses 'input_bytes' as a trigger type, which is not supported according to the provided documentation. The correct trigger type should be 'input_tokens'."
+    },
+    "explanation": "To effectively manage context during long-running codebase explorations with Claude, you must configure server-side compaction using the Messages API request. This involves specifying the compact_20260112 strategy and setting a token threshold for triggering compaction. Additionally, custom instructions can be provided to focus on preserving technical details relevant to your project's context. The correct configuration ensures that Claude automatically summarizes older context when approaching the context window limit, maintaining an active context size suitable for continued development tasks."
+  },
+  {
+    "task_id": "5.5",
+    "scenario": "Scenario 3: Multi-Agent Research System",
+    "question": "During a routine review of production logs for your multi-agent research system using Claude Agent SDK, you notice that in 12% of cases, the synthesis agent fails to properly aggregate findings from document analysis and web search agents. Upon further investigation, it appears that the issue arises when the synthesis agent encounters ambiguous or conflicting information without clear guidance on how to proceed. To address this, which approach should be taken to ensure consistent output quality?",
+    "options": {
+      "A": "Implement a fallback mechanism where the synthesis agent defaults to returning the most recent document analysis result if ambiguity is detected.",
+      "B": "Apply few-shot prompting with examples of ambiguous cases and their resolution strategies to improve output consistency and reduce hallucination in extraction tasks.",
+      "C": "Increase the verbosity level of logs for the synthesis agent to capture more detailed information about each step during execution.",
+      "D": "Configure a custom confidence score threshold that triggers human review when the system encounters any form of ambiguity or conflict."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees, as it does not provide clear guidance for resolving ambiguous cases.",
+      "B": "Based on the documentation provided, applying few-shot prompting with examples of how to handle ambiguous or conflicting information can improve output consistency and reduce hallucination in extraction tasks. This approach directly addresses the issue by providing specific instructions for handling such scenarios.",
+      "C": "While increasing log verbosity may help in diagnosing issues, it does not address the root cause of inconsistent output quality due to ambiguity.",
+      "D": "Although configuring a confidence score threshold is relevant, this option suggests an overly broad and potentially inefficient approach. It would trigger human review for any form of ambiguity or conflict, which could lead to unnecessary overhead."
+    },
+    "explanation": "The correct solution involves applying few-shot prompting with examples that demonstrate how to handle ambiguous cases effectively. This method ensures that the synthesis agent is provided with clear guidance on resolving conflicts and inconsistencies, thereby improving output consistency and reducing hallucination in extraction tasks. The other options either fail to address the root cause of inconsistent output quality or introduce unnecessary complexity without providing a deterministic solution."
+  },
+  {
+    "task_id": "5.6",
+    "scenario": "Scenario 2: Code Generation with Claude Code",
+    "question": "Your team is developing a feature that requires integrating external documents into your workflow for code generation and documentation purposes using Claude Code. You need to ensure that the sources of information are properly cited within the generated code snippets and documentation, preserving their provenance. To achieve this, you decide to use the citations feature provided by Claude's API. However, you encounter a dilemma when deciding between programmatic enforcement through custom content documents versus relying on system prompts for citation management. Which approach should you take to ensure that your team can reliably track source information in generated outputs?",
+    "options": {
+      "A": "Use system prompts exclusively to request citations from Claude, as this method is more flexible and allows for dynamic adjustments.",
+      "B": "Enable the citations feature on all relevant documents by setting 'citations.enabled': true within your API requests to ensure structured claim-source mappings are maintained.",
+      "C": "Implement a custom content document system where each RAG chunk is placed into its own plain text document, allowing Claude to cite specific sentences from these chunks.",
+      "D": "Rely on manual annotations in the generated code and documentation to track source information, as automated citation features may introduce errors."
+    },
+    "correct_answer": "B",
+    "option_explanations": {
+      "A": "This relies on probabilistic LLM compliance instead of deterministic guarantees. System prompts for citations are less reliable than programmatic enforcement through API configurations.",
+      "B": "Correct engineering solution based strictly on docs: Enabling the citations feature programmatically ensures structured claim-source mappings and prevents source attribution loss during summarization or synthesis.",
+      "C": "While this approach offers more control over citation granularity, it is not necessary for all use cases. The default automatic chunking provided by Claude's API suffices in most scenarios without requiring custom content documents.",
+      "D": "Manual annotations are prone to human error and inconsistency, making them an unreliable method compared to automated citation features."
+    },
+    "explanation": "The correct approach is to enable the citations feature programmatically within your API requests. This ensures that all relevant documents have structured claim-source mappings maintained, preventing source attribution loss during summarization or synthesis processes. Relying on system prompts for citations introduces uncertainty and lacks deterministic guarantees compared to programmatic enforcement through API configurations."
+  }
+]
