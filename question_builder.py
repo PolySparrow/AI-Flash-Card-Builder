@@ -6,6 +6,7 @@ import random
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 from langchain_community.vectorstores import FAISS
 from langchain_ollama import OllamaEmbeddings
@@ -126,7 +127,8 @@ def select_exam_scenarios(n: int = 4) -> Dict[str, str]:
         covered.update(SCENARIOS[k]["primary_domains"])
     for domain_id in set(DOMAIN_WEIGHTS.keys()) - covered:
         candidates = [
-            k for k in scenario_keys
+            k
+            for k in scenario_keys
             if domain_id in SCENARIOS[k]["primary_domains"] and k not in chosen
         ]
         if candidates:
@@ -190,6 +192,7 @@ def build_task_doc_index(vectorstore: FAISS) -> Dict[str, List[Dict]]:
             "source": meta.get("source", ""),
             "title": meta.get("title", ""),
             "confidence": meta.get("classification_confidence", 1.0),
+            "primary_domain_id": meta.get("primary_domain_id", ""),  # NEW
         }
         for tid in task_ids:
             index.setdefault(tid, []).append(entry)
@@ -210,6 +213,18 @@ def get_context_for_task(
         f"Source: {d['source']}\nDocument Section: {d['title']}\nContent:\n{d['content']}"
         for d in docs
     )
+
+
+def get_top_doc_meta(
+    task_doc_index: Dict[str, List[Dict]],
+    task_id: str,
+    domain_id: str,
+) -> Tuple[str, str]:
+    """Return (primary_source, primary_domain_id) from the highest-confidence doc."""
+    docs = task_doc_index.get(task_id, [])
+    if docs:
+        return docs[0]["source"], docs[0]["primary_domain_id"] or domain_id
+    return "", domain_id
 
 
 def get_scenario_for_task(
@@ -251,12 +266,11 @@ def build_prompt(
     rag_context: str,
     is_multi: bool,
 ) -> str:
-    # Create high-entropy sub-focus targets to prevent duplicate questions within the same task domain
     focus_areas = [
         "A production failure, edge case, or performance bug discovered in logs",
         "An architectural tradeoff (e.g., programmatic enforcement vs. system prompts)",
         "Pipeline integration syntax, flags (e.g., -p, --print), or config files (e.g., .claude/rules/)",
-        "Unexpected developer behaviors and how to mitigate them deterministically"
+        "Unexpected developer behaviors and how to mitigate them deterministically",
     ]
     selected_focus = random.choice(focus_areas)
 
@@ -334,6 +348,8 @@ def generate_question_with_retry(
     rag_context: str,
     question_index: int,
     total_questions: int,
+    primary_source: str = "",
+    primary_domain_id: str = "",
 ) -> Dict[str, Any]:
     """
     Attempts generation up to MAX_RETRIES times.
@@ -345,12 +361,15 @@ def generate_question_with_retry(
 
     for attempt in range(1, MAX_RETRIES + 1):
         prompt = build_prompt(
-            scenario_name, scenario_desc,
-            task_id, task_statement, task_desc,
-            rag_context, is_multi,
+            scenario_name,
+            scenario_desc,
+            task_id,
+            task_statement,
+            task_desc,
+            rag_context,
+            is_multi,
         )
 
-        # On retry, append the previous parse error so the model self-corrects
         if last_error:
             prompt += (
                 f"\n\n[PREVIOUS ATTEMPT FAILED]\n"
@@ -366,12 +385,16 @@ def generate_question_with_retry(
                 prompt=prompt,
                 options={
                     "temperature": 0.15,
-                    # Ollama's JSON mode — forces valid JSON tokens
                     "format": "json",
                 },
             )
             raw_response = response["response"]
             parsed = json.loads(clean_llm_json(raw_response))
+
+            # Attach source metadata so it flows through to CSV
+            parsed["_primary_source"] = primary_source
+            parsed["_primary_domain_id"] = primary_domain_id
+
             print(
                 f"  ✓ [{task_id}] Q{question_index}/{total_questions}"
                 + (f" (attempt {attempt})" if attempt > 1 else "")
@@ -396,12 +419,22 @@ def generate_question_with_retry(
         "scenario": scenario_name,
         "error": f"Failed after {MAX_RETRIES} attempts. Last error: {last_error}",
         "raw_response": raw_response,
+        "_primary_source": primary_source,
+        "_primary_domain_id": primary_domain_id,
     }
 
 
 # -----------------------------------------------------------------------------
 # 5. CSV Helpers
 # -----------------------------------------------------------------------------
+def source_to_slug(url: str) -> str:
+    """Convert a URL to a compact tag-friendly slug, e.g. 'docs-claude-code-setup'."""
+    if not url:
+        return ""
+    path = urlparse(url).path.strip("/")
+    return path.replace("/", "-") if path else urlparse(url).netloc
+
+
 def build_csv_row(q: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     if "error" in q:
         return None
@@ -421,11 +454,21 @@ def build_csv_row(q: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         "1" if option_keys[i].upper() in correct_keys else "0"
         for i in range(len(option_keys))
     )
+
     q_cols = {f"Q_{i+1}": "" for i in range(MAX_OPTIONS)}
     e_cols = {f"E_{i+1}": "" for i in range(MAX_OPTIONS)}
     for i, key in enumerate(option_keys[:MAX_OPTIONS]):
         q_cols[f"Q_{i+1}"] = options.get(key, "")
         e_cols[f"E_{i+1}"] = option_explanations.get(key, "")
+
+    # ── Build tags ────────────────────────────────────────────────────────────
+    tags = ["claude-cert"]
+    if is_multi:
+        tags.append("multiple-answer")
+    if domain_id := q.get("_primary_domain_id"):
+        tags.append(f"domain:{domain_id}")
+    if source := q.get("_primary_source"):
+        tags.append(f"source:{source_to_slug(source)}")
 
     return {
         "Question": q.get("question", ""),
@@ -434,7 +477,8 @@ def build_csv_row(q: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         **q_cols,
         **e_cols,
         "Explanation": q.get("explanation", ""),
-        "Tags": "claude-cert multiple-answer" if is_multi else "claude-cert",
+        "Tags": " ".join(tags),
+        "Source": q.get("_primary_source", ""),  # NEW: full URL
     }
 
 
@@ -443,7 +487,7 @@ def get_csv_fieldnames() -> List[str]:
         ["Question", "QType", "Answers"]
         + [f"Q_{i+1}" for i in range(MAX_OPTIONS)]
         + [f"E_{i+1}" for i in range(MAX_OPTIONS)]
-        + ["Explanation", "Tags"]
+        + ["Explanation", "Tags", "Source"]  # NEW: Source appended
     )
 
 
@@ -486,13 +530,14 @@ def main() -> None:
     print("=" * 60, "\n")
 
     # ── Build work items ──────────────────────────────────────────────────────
-    # Flatten the task plan into a list of individual generation jobs so
-    # ThreadPoolExecutor can pick them up independently.
     work_items = []
     q_index = 0
     for domain_id, domain_info in TAXONOMY.items():
         for task_id, task_details in domain_info["tasks"].items():
             n_questions = task_plan.get(task_id, 0)
+            primary_source, primary_domain_id = get_top_doc_meta(
+                task_doc_index, task_id, domain_id
+            )
             for _ in range(n_questions):
                 q_index += 1
                 scenario_name, scenario_desc = get_scenario_for_task(
@@ -505,9 +550,13 @@ def main() -> None:
                         task_id=task_id,
                         task_statement=task_details["statement"],
                         task_desc=task_details["description"],
-                        rag_context=get_context_for_task(task_doc_index, task_id),
+                        rag_context=get_context_for_task(
+                            task_doc_index, task_id
+                        ),
                         question_index=q_index,
                         total_questions=total_planned,
+                        primary_source=primary_source,
+                        primary_domain_id=primary_domain_id,
                     )
                 )
 
@@ -530,9 +579,10 @@ def main() -> None:
                     "task_id": item["task_id"],
                     "scenario": item["scenario_name"],
                     "error": str(exc),
+                    "_primary_source": item.get("primary_source", ""),
+                    "_primary_domain_id": item.get("primary_domain_id", ""),
                 }
 
-    # Filter out any None slots (shouldn't occur, but be defensive)
     results: List[Dict[str, Any]] = [q for q in question_bank if q is not None]
 
     # ── Output ────────────────────────────────────────────────────────────────
@@ -559,7 +609,10 @@ def main() -> None:
 
     # ── Summary ───────────────────────────────────────────────────────────────
     errors = sum(1 for q in results if "error" in q)
-    print(f"\nTotal: {len(results)} generated | {rows_written} exported | {errors} errors")
+    print(
+        f"\nTotal: {len(results)} generated | "
+        f"{rows_written} exported | {errors} errors"
+    )
 
 
 if __name__ == "__main__":
