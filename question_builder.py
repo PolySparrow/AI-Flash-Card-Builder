@@ -257,6 +257,8 @@ def clean_llm_json(raw: str) -> str:
     return raw
 
 
+import random
+
 def build_prompt(
     scenario_name: str,
     scenario_desc: str,
@@ -267,10 +269,10 @@ def build_prompt(
     is_multi: bool,
 ) -> str:
     focus_areas = [
-        "A production failure, edge case, or performance bug discovered in logs",
-        "An architectural tradeoff (e.g., programmatic enforcement vs. system prompts)",
-        "Pipeline integration syntax, flags (e.g., -p, --print), or config files (e.g., .claude/rules/)",
-        "Unexpected developer behaviors and how to mitigate them deterministically",
+        "A critical production failure, edge case, or performance bottleneck discovered in logging data",
+        "An architectural trade-off choosing programmatic state enforcement/routing over natural language prompts",
+        "Configuration hierarchy setups, specific CLI flags (e.g., -p/--print), or YAML-frontmatter path-scoping rules",
+        "Deterministic mitigations for unexpected developer behaviors, session handling, or error recovery loops",
     ]
     selected_focus = random.choice(focus_areas)
 
@@ -280,63 +282,70 @@ def build_prompt(
             "The question text MUST be prefixed with '[SELECT TWO] ...' and ask for exactly 2 correct choices. "
             'Provide a JSON list of exactly 2 keys in "correct_answers" (e.g., ["A", "C"]).'
         )
-        answer_field = '"correct_answers": ["A", "C"]'
+        answer_field = '"correct_answers": ["?", "?"]'  # Prompt instructions will handle setting actual keys
     else:
         type_instruction = (
             "Generate a SINGLE-ANSWER question (exactly 1 correct answer out of 4). "
-            'Set "correct_answer" to exactly one option key string (e.g., "B").'
+            'Set "correct_answer" to exactly one option key string: "A", "B", "C", or "D".'
         )
-        answer_field = '"correct_answer": "B"'
+        answer_field = '"correct_answer": "?"'
 
-    return f"""You are an elite exam developer writing high-fidelity questions for the Anthropic Claude Developer Credentials certification.
-Your goal is to write a highly specific, situational question modeled on actual engineering dilemmas. Refer to the style in the official study guide.
+        return f"""You are an elite exam developer writing high-fidelity questions for the Anthropic Claude Developer Credentials certification.
+    Your goal is to write a highly specific, situational question modeled on actual engineering dilemmas. Refer to the style, tone, and formatting of the official study guide.
 
-[EXAM SCENARIO CONTEXT]
-Scenario Name: {scenario_name}
-Environment Overview: {scenario_desc}
+    [EXAM SCENARIO CONTEXT]
+    Scenario Name: {scenario_name}
+    Scenario Baseline: {scenario_desc}
 
-[EXAM BLUEPRINT OBJECTIVE]
-Task ID: {task_id}
-Standard Objective: {task_statement}
-Expected Core Knowledge: {task_desc}
+    [EXAM BLUEPRINT OBJECTIVE]
+    Task ID: {task_id}
+    Standard Objective: {task_statement}
+    Expected Core Knowledge: {task_desc}
 
-[SPECIFIC QUESTION FOCUS]
-To prevent duplicate questions in this domain, dedicate this particular question to testing:
--> {selected_focus}
+    [SPECIFIC QUESTION FOCUS]
+    To prevent duplicate questions in this domain, dedicate this particular question to testing:
+    -> {selected_focus}
 
-[DOCUMENTATION REFERENCE (RAG)]
-{rag_context}
+    [DOCUMENTATION REFERENCE (RAG)]
+    {rag_context}
 
-[QUESTION FORMAT CRITERIA]
-{type_instruction}
+    [QUESTION FORMAT CRITERIA]
+    {type_instruction}
 
-[STRICT QUESTION WRITING RULES]
-1. Avoid high-level, generic definitions (e.g., do NOT ask 'What does stop_reason: tool_use indicate?').
-2. Instead, craft a concrete production scenario. Start with a realistic engineering problem (e.g., 'Your pipeline script hangs indefinitely in CI...', 'Production logs show that in 12% of cases, your agent skips tools...', or 'Your codebase has distinct subprojects in separate directories...').
-3. Distractors (incorrect options) must reflect highly plausible anti-patterns, probabilistic prompt hacks (that fail to offer deterministic guarantees), or obsolete/non-existent SDK parameters.
-4. Ensure that the correct answer is directly verifiable using the provided Documentation Context.
+    [STRICT QUESTION WRITING RULES]
+    1. **Scenario-driven Framing**: Start with a concrete, realistic engineering dilemma. Put the examinee in the position of an active developer experiencing a clear symptom (e.g., 'Your CI job hangs indefinitely...', 'You notice a 12% frequency rate of tools being skipped because...', or 'Your directory contains separate subprojects and your configuration rules are conflicting...'). Do NOT start with general definitions.
+    2. **Decoupled & Randomized Answers**: The correct answer(s) must NOT always sit in option B. Distribute the correct answer(s) dynamically across A, B, C, or D.
+    3. **Plausible Distractors (The Traps)**:
+    - Distractors should not be obviously ridiculous. They must look like convincing patterns that a junior or intermediate developer would write.
+    - Good distractor archetypes to use:
+        * *The Over-engineered Path*: Introducing a whole new microservice, ML router, or pipeline state database where a standard SDK feature or basic design pattern (e.g., proper tool description) works.
+        * *The Probabilistic Prompt Hack*: Relying on natural language prompts (e.g., adding 'Remember to never skip tools!' to system prompts) to force critical execution paths instead of utilizing deterministic, programmatic enforcement.
+        * *The Mistaken Syntax/Config Trap*: Using plausible-sounding but technically incorrect parameters or syntax paths (e.g., setting `CLAUDE_HEADLESS=true` or assuming a `--parallel-disable` CLI flag).
+    4. **No Repeating Catchphrases**: Do not copy-paste the phrase 'This relies on probabilistic LLM compliance instead of deterministic guarantees' word-for-word in every single row. Express this concept in varied, highly context-specific engineering terms.
+    5. **No Visual Bloat**: Avoid putting multi-line, complex API JSON payloads directly inside the multiple-choice options (A-D) unless absolutely necessary. Keep the options concise, focused on architectural choices and specific API/CLI parameter adjustments, similar to the sample questions in the official PDF guide.
 
-[JSON SCHEMAS]
-Output ONLY a raw, parser-compliant JSON object matching this structure:
-{{
-  "task_id": "{task_id}",
-  "scenario": "{scenario_name}",
-  "question": "A situational question starting with a system setup or problem... Use code snippets or exact syntax where possible.",
-  "options": {{
-    "A": "Plausible but incorrect option / anti-pattern",
-    "B": "Correct engineering solution based strictly on docs",
-    "C": "Alternative incorrect option / over-engineered approach",
-    "D": "Incorrect option utilizing non-existent SDK features"
-  }},
-  {answer_field},
-  "option_explanations": {{
-    "A": "Explanation of why this option fails, identifying its class of error (e.g., 'This relies on probabilistic LLM compliance instead of deterministic guarantees').",
-    "B": "Explanation validating why this option is correct.",
-    "C": "Explanation detailing why this option is suboptimal or incorrect.",
-    "D": "Explanation identifying non-existent features or syntax errors in this choice."
-  }},
-  "explanation": "A complete, comprehensive architectural explanation of the solution based on the documentation, explicitly justifying the correct answer(s) over the distractors."
-}}"""
+    [JSON SCHEMAS]
+    Output ONLY a raw, parser-compliant JSON object matching this structure. Ensure that all option keys are populated and the correct answer(s) are assigned to their logical variable fields.
+
+    {{
+    "task_id": "{task_id}",
+    "scenario": "{scenario_name}",
+    "question": "A situational question starting with an engineering symptom... Use specific paths, filenames, or tool names where possible.",
+    "options": {{
+        "A": "Plausible option text",
+        "B": "Plausible option text",
+        "C": "Plausible option text",
+        "D": "Plausible option text"
+    }},
+    {answer_field},
+    "option_explanations": {{
+        "A": "Context-specific explanation of why this option fails or succeeds.",
+        "B": "Context-specific explanation of why this option fails or succeeds.",
+        "C": "Context-specific explanation of why this option fails or succeeds.",
+        "D": "Context-specific explanation of why this option fails or succeeds."
+    }},
+    "explanation": "A complete, comprehensive architectural explanation of the solution based on the documentation, explicitly justifying the correct answer(s) over the distractors by addressing the core tradeoff (such as deterministic guarantees vs. probabilistic model compliance)."
+    }}"""
 
 
 def generate_question_with_retry(
