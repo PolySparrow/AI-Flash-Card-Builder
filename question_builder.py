@@ -31,7 +31,7 @@ MAX_WORKERS = 4
 
 # Retry a failed generation this many times before giving up.
 AUTO_REVISE = True
-MAX_REVISION_ATTEMPTS = 2
+MAX_RETRIES = 2
 MAX_CANDIDATES_PER_SLOT = 3
 
 # Automatically repair questions marked "revise" by the evaluator.
